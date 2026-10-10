@@ -29,3 +29,17 @@ console.log('Resistencias (más cercana primero):');
 for (const z of ctx.selection.above) console.log(`  ${f(z.low)}–${f(z.high)}  toques ${z.touches} (4h: ${z.touches4h})  puntaje ${z.score.toFixed(2)}  último ${new Date(z.lastTouch).toISOString().slice(0, 16)}`);
 console.log('Soportes (más cercano primero):');
 for (const z of ctx.selection.below) console.log(`  ${f(z.low)}–${f(z.high)}  toques ${z.touches} (4h: ${z.touches4h})  puntaje ${z.score.toFixed(2)}  último ${new Date(z.lastTouch).toISOString().slice(0, 16)}`);
+
+// Señales de las últimas 200 velas de 1h cerradas (cada una evaluada con los datos de ese momento).
+import { detectSetups, SETUP_LABEL } from '../lib/analysis/setups';
+console.log('\nSeñales en las últimas 200 velas de 1h:');
+let count = 0;
+for (let i = Math.max(2, closed1h.length - 200); i < closed1h.length; i++) {
+  const t = closed1h[i].closeTime;
+  const cx = contextAt(s, t, closed1h[i].close, DEFAULT_CONFIG);
+  for (const sig of detectSetups({ candles: closed1h, i, zones: cx.zones, trend: cx.trend, market, cfg: DEFAULT_CONFIG })) {
+    count++;
+    console.log(`  ${new Date(t + 1).toISOString().slice(0, 16)} ${sig.direction.toUpperCase().padEnd(5)} ${SETUP_LABEL[sig.setup].padEnd(36)} entrada ${f(sig.entry)} ancla stop ${f(sig.stopAnchor)} conf ${sig.confidence} (tendencia ${cx.trend?.trend})`);
+  }
+}
+console.log(`Total: ${count}`);
