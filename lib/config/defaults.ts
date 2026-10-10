@@ -36,6 +36,7 @@ export interface AppConfig {
   };
   plan: {
     stopBufferPct: number;
+    minStopPct: number; // distancia mínima entrada–stop (evita stops dentro del ruido)
     entryMaxDriftPct: number; // si el precio se aleja más que esto de la entrada, se invalida
     minRR: number; // R:R mínimo en TP1 después de comisiones
     expiryCandles: number; // velas de 1h para que se ejecute la entrada
@@ -94,6 +95,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   },
   plan: {
     stopBufferPct: 0.15,
+    minStopPct: 0.3,
     entryMaxDriftPct: 0.6,
     minRR: 1.5,
     expiryCandles: 4,

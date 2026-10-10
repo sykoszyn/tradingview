@@ -32,6 +32,15 @@ for (const z of ctx.selection.below) console.log(`  ${f(z.low)}–${f(z.high)}  
 
 // Señales de las últimas 200 velas de 1h cerradas (cada una evaluada con los datos de ese momento).
 import { detectSetups, SETUP_LABEL } from '../lib/analysis/setups';
+import { buildPlan } from '../lib/plan/plan';
+import { planToText } from '../lib/plan/plan-text';
+import type { SymbolFilters } from '../lib/types';
+const info = await resolveResource({ resource: 'exchange-info', provider: 'binance', market, symbol }, fetchJson, 'server');
+const filters = (info.data as Record<string, SymbolFilters>)[symbol];
+const phaseName = process.argv[4] ?? 'phase3';
+const phase = DEFAULT_CONFIG.phases[phaseName as 'phase2' | 'phase3' | 'phase4'];
+const tally: Record<string, number> = {};
+let lastPlan: string | null = null;
 console.log('\nSeñales en las últimas 200 velas de 1h:');
 let count = 0;
 for (let i = Math.max(2, closed1h.length - 200); i < closed1h.length; i++) {
@@ -39,7 +48,12 @@ for (let i = Math.max(2, closed1h.length - 200); i < closed1h.length; i++) {
   const cx = contextAt(s, t, closed1h[i].close, DEFAULT_CONFIG);
   for (const sig of detectSetups({ candles: closed1h, i, zones: cx.zones, trend: cx.trend, market, cfg: DEFAULT_CONFIG })) {
     count++;
-    console.log(`  ${new Date(t + 1).toISOString().slice(0, 16)} ${sig.direction.toUpperCase().padEnd(5)} ${SETUP_LABEL[sig.setup].padEnd(36)} entrada ${f(sig.entry)} ancla stop ${f(sig.stopAnchor)} conf ${sig.confidence} (tendencia ${cx.trend?.trend})`);
+    const r = buildPlan({ signal: sig, symbol, market, zones: cx.zones, filters, cfg: DEFAULT_CONFIG, phase });
+    const res = r.kind === 'discarded' ? `descartada: ${r.code}` : r.plan.status === 'operable' ? `OPERABLE ${r.plan.sizing.leverage}x margen ${f(r.plan.sizing.margin)} riesgo ${f(r.plan.sizing.realRiskUSDT)} R:R ${r.plan.rrTp1.toFixed(2)}` : 'no operable en tu fase';
+    tally[r.kind === 'discarded' ? r.code : r.plan.status] = (tally[r.kind === 'discarded' ? r.code : r.plan.status] ?? 0) + 1;
+    if (r.kind === 'plan' && r.plan.status === 'operable') lastPlan = planToText(r.plan, filters);
+    console.log(`  ${new Date(t + 1).toISOString().slice(0, 16)} ${sig.direction.toUpperCase().padEnd(5)} ${SETUP_LABEL[sig.setup].padEnd(36)} conf ${sig.confidence.padEnd(5)} → ${res}`);
   }
 }
-console.log(`Total: ${count}`);
+console.log(`Total: ${count}`, tally);
+if (lastPlan) console.log('\nÚltimo plan operable:\n' + lastPlan);

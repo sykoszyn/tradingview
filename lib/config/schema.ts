@@ -25,6 +25,7 @@ export const configSchema = z.object({
   }),
   plan: z.object({
     stopBufferPct: nonNeg,
+    minStopPct: nonNeg,
     entryMaxDriftPct: pos,
     minRR: pos,
     expiryCandles: int(1),
@@ -136,6 +137,7 @@ export function configWarnings(c: AppConfig, d: AppConfig = DEFAULT_CONFIG): str
   lower('Ventana de retroceso (trades)', c.phases.rollbackWindow, d.phases.rollbackWindow);
   lower('R:R mínimo', c.plan.minRR, d.plan.minRR);
   lower('Margen del stop', c.plan.stopBufferPct, d.plan.stopBufferPct);
+  lower('Distancia mínima del stop', c.plan.minStopPct, d.plan.minStopPct);
   lower('Ventana de noticias (horas)', c.news.windowHours, d.news.windowHours);
   lower('Comisión maker futuros', c.fees.futuresMakerPct, d.fees.futuresMakerPct);
   lower('Comisión taker futuros', c.fees.futuresTakerPct, d.fees.futuresTakerPct);
