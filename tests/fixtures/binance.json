@@ -1,0 +1,614 @@
+{
+ "binance-sellers": {
+  "code": "000000",
+  "success": true,
+  "data": [
+   {
+    "adv": {
+     "advNo": "12941910085929615360",
+     "tradeType": "SELL",
+     "price": "1602.99",
+     "minSingleTransAmount": "22000",
+     "maxSingleTransAmount": "75000",
+     "dynamicMaxSingleTransAmount": "41418",
+     "surplusAmount": "25.89",
+     "tradableQuantity": "25.83",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      },
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "Hold7",
+     "monthOrderCount": 220,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12937152281876901888",
+     "tradeType": "SELL",
+     "price": "1602.99",
+     "minSingleTransAmount": "15000",
+     "maxSingleTransAmount": "300000",
+     "dynamicMaxSingleTransAmount": "22765",
+     "surplusAmount": "14.23",
+     "tradableQuantity": "14.20",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      },
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "BankArgentina",
+       "tradeMethodName": "Bank Transfer (Argentina)"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "GastonCash",
+     "monthOrderCount": 208,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12897471317654396928",
+     "tradeType": "SELL",
+     "price": "1602.99",
+     "minSingleTransAmount": "8000",
+     "maxSingleTransAmount": "150000",
+     "dynamicMaxSingleTransAmount": "150000",
+     "surplusAmount": "293.09",
+     "tradableQuantity": "292.50",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      },
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "Nancy-Crypto",
+     "monthOrderCount": 518,
+     "monthFinishRate": 0.995,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12918703227515551744",
+     "tradeType": "SELL",
+     "price": "1603.00",
+     "minSingleTransAmount": "10000",
+     "maxSingleTransAmount": "200000",
+     "dynamicMaxSingleTransAmount": "22413",
+     "surplusAmount": "14.01",
+     "tradableQuantity": "13.98",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "pochib",
+     "monthOrderCount": 50,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12892716885320622080",
+     "tradeType": "SELL",
+     "price": "1603.00",
+     "minSingleTransAmount": "390000",
+     "maxSingleTransAmount": "4000000",
+     "dynamicMaxSingleTransAmount": "398350",
+     "surplusAmount": "249.00",
+     "tradableQuantity": "248.50",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "BankArgentina",
+       "tradeMethodName": "Bank Transfer (Argentina)"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "ChinoCrypto",
+     "monthOrderCount": 10,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12941871010992406528",
+     "tradeType": "SELL",
+     "price": "1603.00",
+     "minSingleTransAmount": "10000",
+     "maxSingleTransAmount": "100000",
+     "dynamicMaxSingleTransAmount": "100000",
+     "surplusAmount": "292.53",
+     "tradableQuantity": "291.94",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "Beloapp",
+       "tradeMethodName": "Belo app"
+      },
+      {
+       "identifier": "Reba",
+       "tradeMethodName": "Reba"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "LCripto77",
+     "monthOrderCount": 47,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12942226732261539840",
+     "tradeType": "SELL",
+     "price": "1603.00",
+     "minSingleTransAmount": "7840",
+     "maxSingleTransAmount": "9800000",
+     "dynamicMaxSingleTransAmount": "293995",
+     "surplusAmount": "183.77",
+     "tradableQuantity": "183.40",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "elFinoLittlePrince",
+     "monthOrderCount": 15,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12908961785231654912",
+     "tradeType": "SELL",
+     "price": "1603.00",
+     "minSingleTransAmount": "100000",
+     "maxSingleTransAmount": "300000",
+     "dynamicMaxSingleTransAmount": "300000",
+     "surplusAmount": "300.00",
+     "tradableQuantity": "299.40",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      },
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "Grayscale",
+     "monthOrderCount": 101,
+     "monthFinishRate": 1.0,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   }
+  ]
+ },
+ "binance-buyers": {
+  "code": "000000",
+  "success": true,
+  "data": [
+   {
+    "adv": {
+     "advNo": "12940425913136627712",
+     "tradeType": "BUY",
+     "price": "1598.21",
+     "minSingleTransAmount": "10000",
+     "maxSingleTransAmount": "528153",
+     "dynamicMaxSingleTransAmount": "528144",
+     "surplusAmount": "330.46",
+     "tradableQuantity": "330.46",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "Prex",
+       "tradeMethodName": "Prex"
+      },
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "Beloapp",
+       "tradeMethodName": "Belo app"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "julianrojas14",
+     "monthOrderCount": 61,
+     "monthFinishRate": 0.984,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12921801897569796096",
+     "tradeType": "BUY",
+     "price": "1598.20",
+     "minSingleTransAmount": "3000000",
+     "maxSingleTransAmount": "15000000",
+     "dynamicMaxSingleTransAmount": "10388300",
+     "surplusAmount": "6500.00",
+     "tradableQuantity": "6500.00",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "personalpay",
+       "tradeMethodName": "Personal Pay"
+      },
+      {
+       "identifier": "BANK",
+       "tradeMethodName": "Bank Transfer"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "BBVABank",
+       "tradeMethodName": "BBVA"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "Perla_15",
+     "monthOrderCount": 19,
+     "monthFinishRate": 0.731,
+     "userType": "merchant",
+     "userIdentity": "MASS_MERCHANT"
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12921223036827947008",
+     "tradeType": "BUY",
+     "price": "1598.02",
+     "minSingleTransAmount": "200000",
+     "maxSingleTransAmount": "400000",
+     "dynamicMaxSingleTransAmount": "239223",
+     "surplusAmount": "149.70",
+     "tradableQuantity": "149.70",
+     "payTimeLimit": 30,
+     "tradeMethods": [
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "BankArgentina",
+       "tradeMethodName": "Bank Transfer (Argentina)"
+      },
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "IviCoin",
+     "monthOrderCount": 634,
+     "monthFinishRate": 0.999,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12880411271072911360",
+     "tradeType": "BUY",
+     "price": "1598.01",
+     "minSingleTransAmount": "100000",
+     "maxSingleTransAmount": "400000",
+     "dynamicMaxSingleTransAmount": "399262",
+     "surplusAmount": "249.85",
+     "tradableQuantity": "249.85",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "Fiwind",
+       "tradeMethodName": "Fiwind"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "Nami008",
+     "monthOrderCount": 336,
+     "monthFinishRate": 0.989,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12937854971446677504",
+     "tradeType": "BUY",
+     "price": "1598.00",
+     "minSingleTransAmount": "7840",
+     "maxSingleTransAmount": "32000",
+     "dynamicMaxSingleTransAmount": "32000",
+     "surplusAmount": "81.05",
+     "tradableQuantity": "81.05",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      },
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      },
+      {
+       "identifier": "Beloapp",
+       "tradeMethodName": "Belo app"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "silale",
+     "monthOrderCount": 186,
+     "monthFinishRate": 0.99,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12940751131726188544",
+     "tradeType": "BUY",
+     "price": "1597.57",
+     "minSingleTransAmount": "20000",
+     "maxSingleTransAmount": "100000",
+     "dynamicMaxSingleTransAmount": "100000",
+     "surplusAmount": "300.00",
+     "tradableQuantity": "300.00",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "UalaNew",
+       "tradeMethodName": "Uala"
+      },
+      {
+       "identifier": "Beloapp",
+       "tradeMethodName": "Belo app"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "Obed-Edom",
+     "monthOrderCount": 510,
+     "monthFinishRate": 0.995,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12901062761781600256",
+     "tradeType": "BUY",
+     "price": "1597.56",
+     "minSingleTransAmount": "10000",
+     "maxSingleTransAmount": "1033987",
+     "dynamicMaxSingleTransAmount": "982611",
+     "surplusAmount": "615.07",
+     "tradableQuantity": "615.07",
+     "payTimeLimit": 15,
+     "tradeMethods": [
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "Fiwind",
+       "tradeMethodName": "Fiwind"
+      },
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "LemonCash",
+       "tradeMethodName": "Lemon Cash"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "EjZeb",
+     "monthOrderCount": 376,
+     "monthFinishRate": 0.998,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   },
+   {
+    "adv": {
+     "advNo": "12940599200718041088",
+     "tradeType": "BUY",
+     "price": "1597.50",
+     "minSingleTransAmount": "49400",
+     "maxSingleTransAmount": "49507",
+     "dynamicMaxSingleTransAmount": "49507",
+     "surplusAmount": "124.00",
+     "tradableQuantity": "124.00",
+     "payTimeLimit": 60,
+     "tradeMethods": [
+      {
+       "identifier": "NaranjaX",
+       "tradeMethodName": "Naranja X"
+      },
+      {
+       "identifier": "MercadoPagoNew",
+       "tradeMethodName": "Mercadopago"
+      },
+      {
+       "identifier": "BancoBrubankNew",
+       "tradeMethodName": "Banco Brubank"
+      },
+      {
+       "identifier": "BankArgentina",
+       "tradeMethodName": "Bank Transfer (Argentina)"
+      },
+      {
+       "identifier": "UalaNewest",
+       "tradeMethodName": "Uala"
+      }
+     ]
+    },
+    "advertiser": {
+     "nickName": "-MCrypto-",
+     "monthOrderCount": 212,
+     "monthFinishRate": 0.991,
+     "userType": "user",
+     "userIdentity": ""
+    }
+   }
+  ]
+ }
+}

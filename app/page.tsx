@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/AppShell';
+import { MesaP2P } from '@/components/MesaP2P';
 
 export default function Page() {
-  return <AppShell />;
+  return <MesaP2P />;
 }
