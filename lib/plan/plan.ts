@@ -115,13 +115,20 @@ export function buildPlan(inp: PlanInput): PlanResult {
   const sign = dir === 'long' ? 1 : -1;
 
   const entry = roundPrice(s.entry, tick, dir === 'long' ? 'floor' : 'ceil');
-  // Stop técnico: detrás de la zona/mecha + margen; y al menos a minStopPct de la entrada.
-  let stopRaw = s.stopAnchor * (1 - sign * pct(cfg.plan.stopBufferPct));
-  const minStop = entry * (1 - sign * pct(cfg.plan.minStopPct));
+  // Stop técnico detrás de la zona/mecha: margen fijo (%) o k × ATR; y al menos a minStopPct
+  // de la entrada. Con señales en 4h los porcentajes se escalan ×2 (la volatilidad crece con √tiempo).
+  const tfScale = cfg.analysis.signalTimeframe === '4h' ? 2 : 1;
   const warnings: string[] = [];
+  let stopRaw =
+    cfg.plan.stopMode === 'atr' && s.atr && Number.isFinite(s.atr)
+      ? s.stopAnchor - sign * cfg.plan.atrMultiplier * s.atr
+      : s.stopAnchor * (1 - sign * pct(cfg.plan.stopBufferPct) * tfScale);
+  if (cfg.plan.stopMode === 'atr' && !(s.atr && Number.isFinite(s.atr))) warnings.push('Sin ATR disponible: se usó el margen fijo para el stop.');
+  const minStopPct = cfg.plan.minStopPct * tfScale;
+  const minStop = entry * (1 - sign * pct(minStopPct));
   if (dir === 'long' ? stopRaw > minStop : stopRaw < minStop) {
     stopRaw = minStop;
-    warnings.push(`Stop alejado a la distancia mínima de ${cfg.plan.minStopPct}% para que no quede dentro del ruido.`);
+    warnings.push(`Stop alejado a la distancia mínima de ${minStopPct}% para que no quede dentro del ruido.`);
   }
   const stop = roundStopOutward(stopRaw, tick, dir);
   if (dir === 'long' ? stop >= entry : stop <= entry)
@@ -165,7 +172,8 @@ export function buildPlan(inp: PlanInput): PlanResult {
   const pnl = status === 'operable' ? computePnl(dir, sizing.qty, entry, stop, tp1, tp2, cfg.plan.tp1ClosePct, rates) : null;
   const drift = pct(cfg.plan.entryMaxDriftPct);
   const entryLimit = roundPrice(entry * (1 + sign * drift), tick);
-  const expiresAt = s.signalTime + cfg.plan.expiryCandles * HOUR;
+  const tfMs = cfg.analysis.signalTimeframe === '4h' ? 4 * HOUR : HOUR;
+  const expiresAt = s.signalTime + cfg.plan.expiryCandles * tfMs;
 
   const plan: TradePlan = {
     id: `${inp.symbol}-${market}-${s.id}`,
@@ -192,8 +200,8 @@ export function buildPlan(inp: PlanInput): PlanResult {
     expiryCandles: cfg.plan.expiryCandles,
     invalidation:
       dir === 'long'
-        ? `Cancelar si antes de llenarse el precio toca el stop (${fmt(stop)}), sube por encima de ${fmt(entryLimit)} (+${cfg.plan.entryMaxDriftPct}%) o pasan ${cfg.plan.expiryCandles} velas de 1h.`
-        : `Cancelar si antes de llenarse el precio toca el stop (${fmt(stop)}), baja por debajo de ${fmt(entryLimit)} (−${cfg.plan.entryMaxDriftPct}%) o pasan ${cfg.plan.expiryCandles} velas de 1h.`,
+        ? `Cancelar si antes de llenarse el precio toca el stop (${fmt(stop)}), sube por encima de ${fmt(entryLimit)} (+${cfg.plan.entryMaxDriftPct}%) o pasan ${cfg.plan.expiryCandles} velas de ${cfg.analysis.signalTimeframe}.`
+        : `Cancelar si antes de llenarse el precio toca el stop (${fmt(stop)}), baja por debajo de ${fmt(entryLimit)} (−${cfg.plan.entryMaxDriftPct}%) o pasan ${cfg.plan.expiryCandles} velas de ${cfg.analysis.signalTimeframe}.`,
     status,
     sizing,
     pnl,

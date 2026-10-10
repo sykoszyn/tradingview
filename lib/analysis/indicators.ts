@@ -60,3 +60,22 @@ export function priorVolumeAverage(candles: Candle[], i: number, period: number)
   for (let j = i - period; j < i; j++) s += candles[j].volume;
   return s / period;
 }
+
+/** ATR de Wilder (rango verdadero promedio). NaN hasta tener `period` velas. */
+export function atr(candles: Candle[], period: number): number[] {
+  const out = new Array<number>(candles.length).fill(NaN);
+  let prev = NaN;
+  let sum = 0;
+  for (let i = 0; i < candles.length; i++) {
+    const c = candles[i];
+    const tr = i === 0 ? c.high - c.low : Math.max(c.high - c.low, Math.abs(c.high - candles[i - 1].close), Math.abs(c.low - candles[i - 1].close));
+    if (i < period) {
+      sum += tr;
+      if (i === period - 1) out[i] = prev = sum / period;
+    } else {
+      prev = (prev * (period - 1) + tr) / period;
+      out[i] = prev;
+    }
+  }
+  return out;
+}

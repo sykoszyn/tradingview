@@ -10,7 +10,14 @@ export const HARD_LIMITS = {
   spotLeverage: 1,
 } as const;
 
-export type CounterTrendMode = 'discard' | 'lowerConfidence';
+/**
+ * discard: descarta señales contra la tendencia de 4h (en lateral se permiten).
+ * lowerConfidence: las muestra con confianza baja.
+ * withTrendOnly: solo a favor de la tendencia (descarta en contra Y en lateral).
+ */
+export type CounterTrendMode = 'discard' | 'lowerConfidence' | 'withTrendOnly';
+export type SignalTimeframe = '1h' | '4h';
+export type StopMode = 'percent' | 'atr';
 
 export interface PhaseLimits {
   maxMarginUSDT: number;
@@ -33,13 +40,18 @@ export interface AppConfig {
     emaSlow: number;
     lateralBandPct: number; // si EMA50 y EMA200 están a menos de este % → lateral
     counterTrendMode: CounterTrendMode;
+    signalTimeframe: SignalTimeframe; // velas donde se evalúan los setups
+    minZoneTouches: number; // toques mínimos de la zona de la señal
   };
   plan: {
+    stopMode: StopMode; // 'percent': margen fijo · 'atr': k × ATR detrás de la zona/mecha
     stopBufferPct: number;
+    atrPeriod: number;
+    atrMultiplier: number;
     minStopPct: number; // distancia mínima entrada–stop (evita stops dentro del ruido)
     entryMaxDriftPct: number; // si el precio se aleja más que esto de la entrada, se invalida
     minRR: number; // R:R mínimo en TP1 después de comisiones
-    expiryCandles: number; // velas de 1h para que se ejecute la entrada
+    expiryCandles: number; // velas (de la temporalidad de señal) para que se ejecute la entrada
     tp1ClosePct: number;
     maxRiskMultiplier: number; // descartar si riesgo real > riesgo configurado × esto
   };
@@ -92,9 +104,14 @@ export const DEFAULT_CONFIG: AppConfig = {
     emaSlow: 200,
     lateralBandPct: 0.5,
     counterTrendMode: 'discard',
+    signalTimeframe: '1h',
+    minZoneTouches: 1,
   },
   plan: {
+    stopMode: 'percent',
     stopBufferPct: 0.15,
+    atrPeriod: 14,
+    atrMultiplier: 1,
     minStopPct: 0.3,
     entryMaxDriftPct: 0.6,
     minRR: 1.5,
@@ -125,7 +142,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     phase4MinTrades: 30,
     rollbackDrawdownPct: 15,
     rollbackWindow: 20,
-    phase2: { maxMarginUSDT: 10, maxLeverage: 2 },
+    phase2: { maxMarginUSDT: 15, maxLeverage: 2 },
     phase3: { maxMarginUSDT: 25, maxLeverage: 2 },
     phase4: { maxMarginUSDT: 50, maxLeverage: 3 },
   },

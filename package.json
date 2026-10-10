@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "analyze": "tsx scripts/analyze.mts",
-    "backtest": "tsx scripts/backtest.mts"
+    "backtest": "tsx scripts/backtest.mts",
+    "experiment": "tsx scripts/experiment.mts"
   },
   "dependencies": {
     "lightweight-charts": "5.2.1",

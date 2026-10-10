@@ -7,7 +7,7 @@
 import type { AppConfig, PhaseLimits } from '../config/defaults';
 import { pct } from '../config/defaults';
 import type { BracketSet, Candle, Direction, FundingRatePoint, Market, SymbolFilters, TradingSymbol } from '../types';
-import { prepareSeries } from '../analysis/context';
+import { prepareSeries, signalSeries } from '../analysis/context';
 import type { Confidence, SetupType } from '../analysis/setups';
 import { lastClosedIndex } from '../analysis/trend';
 import type { DiscardCode, TradePlan } from '../plan/plan';
@@ -116,20 +116,23 @@ export function runBacktest(datasets: BacktestDataset[], o: BacktestOptions, onP
   const res: BacktestResult = { trades: [], discards: [], notFilled: [], unresolved: [], assumedWorst: 0, signalsEvaluated: 0 };
   const rCfg: AppConfig = { ...o.cfg, plan: { ...o.cfg.plan, maxRiskMultiplier: 1e9 } };
   const rPhase: PhaseLimits = { maxMarginUSDT: 1e12, maxLeverage: o.cfg.sizing.defaultLeverage };
-  const total = datasets.reduce((s, d) => s + d.c1h.length, 0);
+  const total = datasets.reduce((s, d) => s + (o.cfg.analysis.signalTimeframe === '4h' ? d.c4h.length : d.c1h.length), 0);
   let done = 0;
 
   for (const ds of datasets) {
     const prepared = prepareSeries(ds.c1h, ds.c4h, o.cfg);
+    const sigCandles = signalSeries(prepared, o.cfg).candles;
     const intrabar = intrabarFor(ds);
     const priceAt = (t: number) => {
       const k = lastClosedIndex(ds.c1h, t);
       return k >= 0 ? ds.c1h[k].close : ds.c1h[0].open;
     };
     const busyUntil: Record<Track, number> = { usdt: -1, r: -1 };
-    const first = Math.max(2, ds.c1h.findIndex((c) => c.closeTime >= o.from));
-    for (let i = first; i < ds.c1h.length; i++) {
-      const c = ds.c1h[i];
+    const startIdx = sigCandles.findIndex((c) => c.closeTime >= o.from);
+    if (startIdx < 0) continue;
+    const first = Math.max(2, startIdx);
+    for (let i = first; i < sigCandles.length; i++) {
+      const c = sigCandles[i];
       done++;
       if (onProgress && done % 500 === 0) onProgress(done / total);
       if (c.closeTime > o.to) break;
@@ -169,7 +172,7 @@ export function runBacktest(datasets: BacktestDataset[], o: BacktestOptions, onP
             slippage: pct(o.cfg.fees.slippagePct),
             maxHoldMs: o.maxHoldHours * 3_600_000,
           },
-          ds.c1h,
+          sigCandles,
           i + 1,
           intrabar,
         );

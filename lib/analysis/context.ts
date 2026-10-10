@@ -4,6 +4,7 @@ import type { AppConfig } from '../config/defaults';
 import { pct } from '../config/defaults';
 import type { Candle } from '../types';
 import { findPivots, type Pivot } from './pivots';
+import { atr } from './indicators';
 import { buildZones, selectZones, type Zone, type ZoneSelection } from './zones';
 import { classifyTrend, dailyVwap, lastClosedIndex, trendSeries, type TrendContext, type TrendSeries } from './trend';
 
@@ -17,6 +18,13 @@ export interface PreparedSeries {
   pivots4h: Pivot[];
   trend: TrendSeries;
   vwap1h: number[];
+  atr1h: number[];
+  atr4h: number[];
+}
+
+/** Velas y ATR de la temporalidad donde se evalúan los setups. */
+export function signalSeries(s: PreparedSeries, cfg: AppConfig): { candles: Candle[]; atr: number[] } {
+  return cfg.analysis.signalTimeframe === '4h' ? { candles: s.c4h, atr: s.atr4h } : { candles: s.c1h, atr: s.atr1h };
 }
 
 export function prepareSeries(c1h: Candle[], c4h: Candle[], cfg: AppConfig): PreparedSeries {
@@ -28,6 +36,8 @@ export function prepareSeries(c1h: Candle[], c4h: Candle[], cfg: AppConfig): Pre
     pivots4h: findPivots(c4h, a.pivotStrength, '4h', a.volumeAvgPeriod),
     trend: trendSeries(c4h, a.emaFast, a.emaSlow),
     vwap1h: dailyVwap(c1h),
+    atr1h: atr(c1h, cfg.plan.atrPeriod),
+    atr4h: atr(c4h, cfg.plan.atrPeriod),
   };
 }
 
@@ -47,8 +57,9 @@ export function contextAt(s: PreparedSeries, now: number, price: number, cfg: Ap
   const a = cfg.analysis;
   const from1h = now - a.zoneLookback1h * HOUR;
   const from4h = now - a.zoneLookback4h * 4 * HOUR;
+  // Con señales en 4h las zonas salen solo de pivots de 4h (objetivos y stops acordes a esa escala).
   const pivots = [
-    ...s.pivots1h.filter((p) => p.confirmedAt <= now && p.time >= from1h),
+    ...(a.signalTimeframe === '4h' ? [] : s.pivots1h.filter((p) => p.confirmedAt <= now && p.time >= from1h)),
     ...s.pivots4h.filter((p) => p.confirmedAt <= now && p.time >= from4h),
   ];
   const zones = buildZones(pivots, { mergePct: pct(a.zoneMergePct), now, halfLifeMs: a.recencyHalfLifeCandles * HOUR });

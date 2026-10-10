@@ -54,6 +54,8 @@ export interface SetupSignal {
   confidenceScore: number;
   reasons: string[];
   explanation: string;
+  /** ATR de la temporalidad de señal al cierre de la vela (para stops por ATR). */
+  atr?: number;
 }
 
 export interface SetupInput {
@@ -63,6 +65,7 @@ export interface SetupInput {
   trend: TrendContext | null;
   market: Market;
   cfg: AppConfig;
+  atr?: number;
 }
 
 const fmt = (n: number) => n.toLocaleString('es-AR', { maximumFractionDigits: 2 });
@@ -96,6 +99,7 @@ export function detectSetups(input: SetupInput): SetupSignal[] {
   const out: Omit<SetupSignal, 'confidence' | 'confidenceScore' | 'counterTrend' | 'id'>[] = [];
 
   for (const z of candidateZones(zones, c, i, a.zonesPerSide)) {
+    if (z.touches < a.minZoneTouches) continue;
     // ---- LONG ----
     // Rebote en soporte: la mecha entra en la zona, cierra arriba de su mitad, mecha inferior ≥ 50 % del rango.
     if (
@@ -172,11 +176,16 @@ export function detectSetups(input: SetupInput): SetupSignal[] {
   for (const s of out) {
     const counterTrend =
       (s.direction === 'long' && trend?.trend === 'bajista') || (s.direction === 'short' && trend?.trend === 'alcista');
-    if (counterTrend && a.counterTrendMode === 'discard') continue;
+    if (counterTrend && (a.counterTrendMode === 'discard' || a.counterTrendMode === 'withTrendOnly')) continue;
+    if (a.counterTrendMode === 'withTrendOnly') {
+      const aligned = (s.direction === 'long' && trend?.trend === 'alcista') || (s.direction === 'short' && trend?.trend === 'bajista');
+      if (!aligned) continue;
+    }
     const { score, confidence } = scoreConfidence(s, zones, trend, counterTrend);
     scored.push({
       ...s,
       id: `${s.setup}-${s.signalTime}-${s.zone.id}`,
+      atr: input.atr,
       counterTrend,
       confidence,
       confidenceScore: score,

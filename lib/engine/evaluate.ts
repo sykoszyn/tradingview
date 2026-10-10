@@ -2,14 +2,14 @@
 // así las reglas son exactamente las mismas en los dos.
 import type { AppConfig, PhaseLimits } from '../config/defaults';
 import type { BracketSet, Market, SymbolFilters, TradingSymbol } from '../types';
-import { contextAt, type AnalysisContext, type PreparedSeries } from '../analysis/context';
+import { contextAt, signalSeries, type AnalysisContext, type PreparedSeries } from '../analysis/context';
 import { detectSetups, type SetupSignal } from '../analysis/setups';
 import { buildPlan, type PlanExtension, type PlanResult } from '../plan/plan';
 import { fundingExtension, liquidationExtension } from '../plan/extensions';
 
 export interface EvaluateInput {
   prepared: PreparedSeries;
-  /** Índice de la última vela de 1h CERRADA. */
+  /** Índice de la última vela CERRADA de la temporalidad de señal (1h o 4h). */
   i: number;
   symbol: TradingSymbol;
   market: Market;
@@ -29,9 +29,10 @@ export function futuresExtensions(market: Market, brackets?: BracketSet, funding
 }
 
 export function signalsAt(prepared: PreparedSeries, i: number, market: Market, cfg: AppConfig): { context: AnalysisContext; signals: SetupSignal[] } {
-  const c = prepared.c1h[i];
+  const sig = signalSeries(prepared, cfg);
+  const c = sig.candles[i];
   const context = contextAt(prepared, c.closeTime, c.close, cfg);
-  const signals = detectSetups({ candles: prepared.c1h, i, zones: context.zones, trend: context.trend, market, cfg });
+  const signals = detectSetups({ candles: sig.candles, i, zones: context.zones, trend: context.trend, market, cfg, atr: sig.atr[i] });
   return { context, signals };
 }
 

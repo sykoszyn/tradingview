@@ -53,7 +53,7 @@ describe('runBacktest', () => {
     for (const t of res.trades) if (t.outcome === 'stop') expect(t.r).toBeLessThan(-0.9);
   });
   it('cuenta las señales descartadas por mínimos con Fase 2 (10 USDT, 2x)', () => {
-    const r2 = runBacktest([ds(c1h)], { ...opts, phase: DEFAULT_CONFIG.phases.phase2 });
+    const r2 = runBacktest([ds(c1h)], { ...opts, phase: { maxMarginUSDT: 10, maxLeverage: 2 } });
     expect(r2.discards.filter((d) => d.track === 'usdt' && d.code === 'minimos').length).toBeGreaterThan(0);
   });
 });
@@ -71,5 +71,22 @@ describe('computeStats', () => {
     expect(s.maxLossStreak).toBe(2);
     expect(s.currentStreak).toBe(1);
     expect(s.equity[3].value).toBeCloseTo(3, 10);
+  });
+});
+
+import { runRandomBaseline, rng } from '@/lib/backtest/random';
+
+describe('línea base al azar', () => {
+  const res = runBacktest([ds(c1h)], opts);
+  const variant = res.trades.filter((t) => t.track === 'r');
+  it('es determinística por semilla', () => {
+    expect(runRandomBaseline([ds(c1h)], variant, opts, 1)).toEqual(runRandomBaseline([ds(c1h)], variant, opts, 1));
+    expect(rng(1)()).not.toBe(rng(2)());
+  });
+  it('genera una cantidad de trades del mismo orden y con 1 R de riesgo', () => {
+    const t = runRandomBaseline([ds(c1h)], variant, opts, 3);
+    expect(t.length).toBeGreaterThan(variant.length * 0.4);
+    expect(t.length).toBeLessThan(variant.length * 2.5 + 5);
+    for (const x of t) expect(x.riskUSDT).toBeCloseTo(1, 8);
   });
 });
