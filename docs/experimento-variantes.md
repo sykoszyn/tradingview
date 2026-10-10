@@ -39,4 +39,20 @@ Lectura:
 
 ## Validación (2026-06-10 → 2026-10-09)
 
-Pendiente: se corre una sola vez con `npm run experiment -- validate c`.
+Corrida única con la variante `c` (registro completo en `validacion-resultado.json`).
+
+| Métrica | Valor |
+|---|---|
+| Trades | 14 |
+| Aciertos | 21,4 % |
+| R:R promedio realizado | 2,99 |
+| Expectativa | **−0,155 R** |
+| Total / DD máximo | −2,17 R / 7,48 R |
+| Liquidaciones | 0 |
+| Azar (100 corridas): media / p5 / p95 | −0,193 / −0,842 / +0,462 R (p-valor 0,42) |
+
+Por par: ETHUSDT futuros 8 trades +0,53 R · BTCUSDT futuros 3 trades −1,08 R · BTCUSDT spot 3 trades −1,06 R · ETHUSDT spot 0 trades.
+
+**Resultado: NO cumple el criterio** (expectativa ≤ +0,15 R y menos de 30 trades), y no le gana al azar.
+Conclusión acordada: la app queda como herramienta de análisis y paper trading, sin pasar a operar real.
+El +0,53 R de ETHUSDT futuros sale de 8 trades y no es evidencia: elegir ese subconjunto después de ver la validación sería sobreajustar.
