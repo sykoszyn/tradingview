@@ -57,6 +57,14 @@ Encabezados: language: en-US · X-Client: H5 · x-platform-type: h5 · Referer: 
 
 Si una plataforma falla, la web muestra "Sin datos de Binance/MEXC" y **no calcula con valores anteriores**. Las lecturas de más de 2 minutos tampoco se usan.
 
+## Comisiones
+
+- **P2P, ya cargadas con los valores oficiales.** Si tu cuenta tiene otra comisión, la corregís en Mi configuración.
+  - **Binance:** maker **0,20 %** para ARS ([anuncio oficial, 25/09/2023](https://www.binance.com/en/support/announcement/binance-p2p-will-update-maker-fees-for-24-fiat-markets-cb2e0f8b48ea4858ac735940eda6d14d)). Taker de **0,05 USDT fijo por orden** ([anuncio oficial, 12/03/2024](https://www.binance.com/en/support/announcement/binance-p2p-will-apply-a-flat-taker-fee-on-usdt-trading-pairs-in-selected-fiat-markets-at-p2p-zone-cde0427260394f17b7d0d69c56b8657f)). Tabla vigente: <https://www.binance.com/es/fee/p2pFeeRate>.
+  - **MEXC:** **0 %** para anunciantes y para quien toma el anuncio ([acuerdo de servicio P2P](https://www.mexc.com/announcements/article/mexc-peer-to-peer-p2p-service-agreement-4411633765785)).
+- **Retiro de USDT desde Binance, en vivo** según la red elegida: `GET https://www.binance.com/bapi/capital/v2/public/capital/config/getOne?coin=USDT&lang=en`, que es público. Se lee en `/api/fees` y se cachea 1 hora. La lista de redes sale de ahí; si una red está pausada, se avisa.
+- **Retiro de USDT desde MEXC: a mano.** Su API de retiros pide clave y su web lo muestra solo con sesión iniciada. Se ve en MEXC → Retirar → USDT → la misma red.
+
 ## Filtros automáticos (configurables)
 
 - Solo comerciantes verificados.

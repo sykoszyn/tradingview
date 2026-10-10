@@ -1,0 +1,176 @@
+{
+ "code": "000000",
+ "data": [
+  {
+   "network": "BSC",
+   "name": "BNB Smart Chain (BEP20)",
+   "withdrawFee": "0.01",
+   "withdrawMin": "3",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "NEAR",
+   "name": "NEAR Protocol",
+   "withdrawFee": "0.2",
+   "withdrawMin": "3",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "AVAXC",
+   "name": "AVAX C-Chain",
+   "withdrawFee": "0.04",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "APT",
+   "name": "Aptos",
+   "withdrawFee": "0.1",
+   "withdrawMin": "3",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "ARBITRUM",
+   "name": "Arbitrum One",
+   "withdrawFee": "0.4",
+   "withdrawMin": "3",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "STATEMINT",
+   "name": "Asset Hub Polkadot",
+   "withdrawFee": "0.1",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "CELO",
+   "name": "CELO",
+   "withdrawFee": "0.05",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "ETH",
+   "name": "Ethereum (ERC20)",
+   "withdrawFee": "0.5",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "KAVAEVM",
+   "name": "KAVAEVM",
+   "withdrawFee": "0.2",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "KAIA",
+   "name": "Kaia",
+   "withdrawFee": "0.02",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "OPTIMISM",
+   "name": "Optimism",
+   "withdrawFee": "0.04",
+   "withdrawMin": "3",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "PLASMA",
+   "name": "Plasma",
+   "withdrawFee": "0.012",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "MATIC",
+   "name": "Polygon POS",
+   "withdrawFee": "0.07",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "SCROLL",
+   "name": "Scroll",
+   "withdrawFee": "0.1",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "SOL",
+   "name": "Solana",
+   "withdrawFee": "0.3",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "XTZ",
+   "name": "Tezos",
+   "withdrawFee": "0.1",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "TON",
+   "name": "The Open Network (TON)",
+   "withdrawFee": "0.3",
+   "withdrawMin": "3",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "TRX",
+   "name": "Tron (TRC20)",
+   "withdrawFee": "1.5",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  },
+  {
+   "network": "OPBNB",
+   "name": "opBNB",
+   "withdrawFee": "0.015",
+   "withdrawMin": "5",
+   "withdrawEnable": true,
+   "depositEnable": true,
+   "busy": false
+  }
+ ]
+}

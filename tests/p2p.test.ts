@@ -241,3 +241,31 @@ describe('cálculos', () => {
     expect(scenario('binance', 'binance', best3, calc({ fees: { binance: { maker: 0, taker: 0 }, mexc: { maker: 0, taker: 0 } } }), 'maker').light).toBe('warn');
   });
 });
+
+import withdraw from './fixtures/binance-withdraw.json';
+import { OFFICIAL_P2P_FEES, parseBinanceWithdraw } from '@/lib/p2p/fees';
+
+describe('comisiones', () => {
+  it('retiro de USDT desde Binance por red (respuesta real guardada)', () => {
+    const nets = parseBinanceWithdraw(withdraw);
+    const trx = nets.find((n) => n.network === 'TRX')!;
+    const bsc = nets.find((n) => n.network === 'BSC')!;
+    expect(trx.name).toMatch(/TRC20/);
+    expect(trx.fee).toBeGreaterThan(0);
+    expect(bsc.fee).toBeGreaterThanOrEqual(0);
+    expect(typeof trx.enabled).toBe('boolean');
+  });
+  it('valores oficiales del P2P: Binance maker 0,20 % y taker 0,05 USDT por orden; MEXC 0 %', () => {
+    expect(OFFICIAL_P2P_FEES.binance).toMatchObject({ makerPct: 0.2, takerPct: 0, takerFlatUsdt: 0.05 });
+    expect(OFFICIAL_P2P_FEES.mexc).toMatchObject({ makerPct: 0, takerPct: 0, takerFlatUsdt: 0 });
+  });
+  it('tomando anuncios descuenta el monto fijo por orden de cada lado', () => {
+    const best = { binance: { bid: 1430, ask: 1452 }, mexc: { bid: 1470, ask: 1480 } };
+    const base = calc({ fees: { binance: { maker: 0.002, taker: 0, takerFlat: 0.05 }, mexc: { maker: 0, taker: 0, takerFlat: 0 } } });
+    const r = scenario('binance', 'mexc', best, base, 'taker');
+    // 300 USDT − 1 de retiro − 0,05 de la orden en Binance
+    expect(r.profit).toBeCloseTo((300 - 1 - 0.05) * 1470 - 300 * 1452, 6);
+    const same = scenario('binance', 'binance', { ...best, binance: { bid: 1450, ask: 1440 } }, base, 'taker');
+    expect(same.profit).toBeCloseTo((300 - 0.1) * 1450 - 300 * 1440, 6);
+  });
+});

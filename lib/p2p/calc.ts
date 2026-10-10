@@ -4,6 +4,8 @@ import type { Platform } from './types';
 export interface Fees {
   maker: number | null; // fracción (0.002 = 0,2 %); null = sin cargar
   taker: number | null;
+  /** Monto fijo en USDT por cada orden tomada (Binance P2P: 0,05 USDT). */
+  takerFlat?: number;
 }
 
 export interface CalcSettings {
@@ -94,8 +96,10 @@ export function scenario(buyPl: Platform, sellPl: Platform, best: Record<Platfor
   if (B === null || S === null) return base;
   const fb = fbRaw ?? 0;
   const fs = fsRaw ?? 0;
+  // Al tomar anuncios, algunas plataformas cobran además un monto fijo por orden (1 orden de compra + 1 de venta).
+  const flat = mode === 'taker' ? (s.fees[buyPl].takerFlat ?? 0) + (s.fees[sellPl].takerFlat ?? 0) : 0;
   const { q, example } = cycleQty(B, s);
-  const got = q * (1 - fb) - base.W;
+  const got = q * (1 - fb) - base.W - flat;
   const arsIn = q * B;
   const arsOut = Math.max(0, got) * S * (1 - fs);
   const profit = arsOut - arsIn;

@@ -7,6 +7,8 @@ import { parseNum, scenario, SCENARIOS, suggest, type Best, type CalcSettings, t
 import { autoReply, COUNTERPARTY_REQS, termsText, type AdSide } from '@/lib/p2p/ad-text';
 import { useMarket, REFRESH_MS } from '@/hooks/useMarket';
 import { useSettings, type Settings } from '@/hooks/useSettings';
+import { useFees } from '@/hooks/useFees';
+import { OFFICIAL_P2P_FEES, type FeesResponse, type WithdrawNetwork } from '@/lib/p2p/fees';
 
 const ars = (n: number | null | undefined, d = 2) =>
   n === null || n === undefined || !Number.isFinite(n) ? 'sin dato' : '$ ' + n.toLocaleString('es-AR', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -24,6 +26,8 @@ interface Market {
 export function MesaP2P() {
   const { s, update } = useSettings();
   const market = useMarket();
+  const feesLive = useFees();
+  const netInfo = feesLive?.binanceWithdraw.networks.find((n) => n.network === s.net) ?? null;
 
   const filters: FilterSettings = useMemo(
     () => ({
@@ -38,22 +42,24 @@ export function MesaP2P() {
   );
 
   const calc: CalcSettings = useMemo(() => {
-    const fee = (v: string) => {
-      const n = parseNum(v);
-      return n === null ? null : n / 100;
+    // Campo vacío = valor oficial; si escribís un número, manda el tuyo.
+    const fee = (pl: Platform, kind: 'maker' | 'taker') => {
+      const n = parseNum(s.fees[pl][kind]);
+      return (n ?? (kind === 'maker' ? OFFICIAL_P2P_FEES[pl].makerPct : OFFICIAL_P2P_FEES[pl].takerPct)) / 100;
     };
+    const liveBinanceWd = netInfo && netInfo.enabled ? netInfo.fee : null;
     return {
       fees: {
-        binance: { maker: fee(s.fees.binance.maker), taker: fee(s.fees.binance.taker) },
-        mexc: { maker: fee(s.fees.mexc.maker), taker: fee(s.fees.mexc.taker) },
+        binance: { maker: fee('binance', 'maker'), taker: fee('binance', 'taker'), takerFlat: OFFICIAL_P2P_FEES.binance.takerFlatUsdt },
+        mexc: { maker: fee('mexc', 'maker'), taker: fee('mexc', 'taker'), takerFlat: OFFICIAL_P2P_FEES.mexc.takerFlatUsdt },
       },
-      withdrawUsdt: { binance: parseNum(s.wd.binance), mexc: parseNum(s.wd.mexc) },
+      withdrawUsdt: { binance: parseNum(s.wd.binance) ?? liveBinanceWd, mexc: parseNum(s.wd.mexc) },
       capitalArs: parseNum(s.capArs) ?? 0,
       capitalUsdt: parseNum(s.capUsdt) ?? 0,
       minMargin: (parseNum(s.minMargin) ?? 0) / 100,
       step: Math.max(0, parseNum(s.step) ?? 0),
     };
-  }, [s]);
+  }, [s, netInfo]);
 
   const m: Market = useMemo(() => {
     const usable = { binance: false, mexc: false } as Record<Platform, boolean>;
@@ -126,7 +132,7 @@ export function MesaP2P() {
           </p>
           <div className="scen">
             {results.map((r, i) => (
-              <ScenarioCard key={i} r={r} title={SCENARIOS[i][2]} usable={m.usable} mode={s.mode} net={s.net} />
+              <ScenarioCard key={i} r={r} title={SCENARIOS[i][2]} usable={m.usable} mode={s.mode} net={netInfo?.name ?? s.net} calc={calc} />
             ))}
           </div>
         </div>
@@ -146,7 +152,7 @@ export function MesaP2P() {
         </div>
       </details>
 
-      <SettingsPanel s={s} update={update} />
+      <SettingsPanel s={s} update={update} feesLive={feesLive} netInfo={netInfo} />
 
       <footer>Herramienta de cálculo. No es asesoramiento financiero. Revisá cada precio y comisión en la app antes de operar.</footer>
     </div>
@@ -368,7 +374,7 @@ function AdRow({ a }: { a: Ad }) {
 }
 
 // ---------------- Escenarios ----------------
-function ScenarioCard({ r, title, usable, mode, net }: { r: Scenario; title: string; usable: Record<Platform, boolean>; mode: 'maker' | 'taker'; net: string }) {
+function ScenarioCard({ r, title, usable, mode, net, calc }: { r: Scenario; title: string; usable: Record<Platform, boolean>; mode: 'maker' | 'taker'; net: string; calc: CalcSettings }) {
   const lightText = { ok: 'Conviene', warn: 'Justo', bad: 'No conviene' } as const;
   if (!r.ok) {
     const missing = [!usable[r.buyPl] ? `sin datos de ${PLAT_NAME[r.buyPl]}` : null, !usable[r.sellPl] && r.sellPl !== r.buyPl ? `sin datos de ${PLAT_NAME[r.sellPl]}` : null]
@@ -411,11 +417,22 @@ function ScenarioCard({ r, title, usable, mode, net }: { r: Scenario; title: str
         </div>
       </div>
       <p className="note">
-        Ciclo de {num(r.q)} USDT{r.example ? ' (ejemplo: cargá tu capital en Mi configuración)' : ''}.
+        Ciclo de {num(r.q)} USDT{r.example ? ' (ejemplo: cargá tu capital en Mi configuración)' : ''}. Comisiones: {feeLine(r, calc, mode)}.
       </p>
       {r.missing.length > 0 && <p className="warnline">Sin cargar: {r.missing.join(', ')}. Se tomó como 0.</p>}
     </div>
   );
+}
+
+function feeLine(r: Scenario, calc: CalcSettings, mode: 'maker' | 'taker'): string {
+  const part = (pl: Platform) => {
+    const f = calc.fees[pl];
+    const p = mode === 'maker' ? f.maker : f.taker;
+    const flat = mode === 'taker' && f.takerFlat ? ` + ${num(f.takerFlat)} USDT por orden` : '';
+    return `${PLAT_NAME[pl]} ${num((p ?? 0) * 100)} %${flat}`;
+  };
+  const sides = r.buyPl === r.sellPl ? part(r.buyPl) + ' por operación' : `compra ${part(r.buyPl)} · venta ${part(r.sellPl)}`;
+  return sides + (r.cross ? ` · retiro ${r.W === 0 && r.missing.length ? 'sin dato' : num(r.W) + ' USDT'}` : '');
 }
 
 // ---------------- Anuncios ----------------
@@ -538,10 +555,11 @@ function AdCard({ pl, side, s, calc, best, usable }: { pl: Platform; side: AdSid
 }
 
 // ---------------- Configuración ----------------
-function SettingsPanel({ s, update }: { s: Settings; update: Upd }) {
+function SettingsPanel({ s, update, feesLive, netInfo }: { s: Settings; update: Upd; feesLive: FeesResponse | null; netInfo: WithdrawNetwork | null }) {
   const set = <K extends keyof Settings>(k: K, v: Settings[K]) => update((x) => ({ ...x, [k]: v }));
   const setFee = (pl: Platform, kind: 'maker' | 'taker', v: string) => update((x) => ({ ...x, fees: { ...x.fees, [pl]: { ...x.fees[pl], [kind]: v } } }));
   const toggle = (id: string, on: boolean) => update((x) => ({ ...x, methods: on ? [...new Set([...x.methods, id])] : x.methods.filter((m) => m !== id) }));
+  const nets = feesLive?.binanceWithdraw.networks.filter((n) => n.enabled) ?? [];
   return (
     <details className="fold">
       <summary>
@@ -549,38 +567,77 @@ function SettingsPanel({ s, update }: { s: Settings; update: Upd }) {
         <span className="sub">se guarda sola</span>
       </summary>
       <div className="body">
-        <h3>Comisiones por operación (%)</h3>
-        <p className="note">Cargá las que ves en cada app para tu cuenta. Si dejás un campo vacío se calcula como 0 % y te avisamos.</p>
+        <h3>Comisiones del P2P (%)</h3>
+        <p className="note">
+          Ya están cargadas con los valores oficiales. Si tu cuenta tiene otra comisión (por ejemplo, por ser comerciante), escribila y manda la tuya.
+        </p>
         <div className="grid2">
           {PLATFORMS.flatMap((pl) =>
-            (['maker', 'taker'] as const).map((kind) => (
-              <label key={pl + kind} className="f">
-                {PLAT_NAME[pl]} · {kind === 'maker' ? 'con mi anuncio (maker)' : 'tomando anuncio (taker)'}
-                <input type="text" inputMode="decimal" id={`fee-${pl}-${kind}`} placeholder="sin dato" value={s.fees[pl][kind]} onChange={(e) => setFee(pl, kind, e.target.value)} />
-              </label>
-            )),
+            (['maker', 'taker'] as const).map((kind) => {
+              const off = OFFICIAL_P2P_FEES[pl];
+              const val = kind === 'maker' ? off.makerPct : off.takerPct;
+              const flat = kind === 'taker' && off.takerFlatUsdt ? ` + ${num(off.takerFlatUsdt)} USDT/orden` : '';
+              return (
+                <label key={pl + kind} className="f">
+                  {PLAT_NAME[pl]} · {kind === 'maker' ? 'con mi anuncio (maker)' : 'tomando anuncio (taker)'}
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    id={`fee-${pl}-${kind}`}
+                    placeholder={`${num(val)} % oficial${flat}`}
+                    value={s.fees[pl][kind]}
+                    onChange={(e) => setFee(pl, kind, e.target.value)}
+                  />
+                </label>
+              );
+            }),
           )}
         </div>
+        <ul className="note" style={{ margin: 0, paddingLeft: '1.1em' }}>
+          {PLATFORMS.map((pl) => (
+            <li key={pl}>
+              {OFFICIAL_P2P_FEES[pl].source}{' '}
+              <a href={OFFICIAL_P2P_FEES[pl].url} target="_blank" rel="noreferrer">
+                Ver fuente
+              </a>
+            </li>
+          ))}
+        </ul>
 
         <h3>Pasar USDT de una plataforma a otra</h3>
         <div className="grid3">
           <label className="f">
             Red
             <select id="net" value={s.net} onChange={(e) => set('net', e.target.value)}>
-              {['TRC20', 'BEP20', 'Polygon', 'Solana', 'Arbitrum', 'Otra'].map((n) => (
-                <option key={n}>{n}</option>
+              {(nets.length ? nets : [{ network: s.net, name: s.net }]).map((n) => (
+                <option key={n.network} value={n.network}>
+                  {n.name}
+                </option>
               ))}
             </select>
           </label>
           <label className="f">
             Retiro Binance→MEXC (USDT)
-            <input type="text" inputMode="decimal" id="wd-binance" placeholder="sin dato" value={s.wd.binance} onChange={(e) => set('wd', { ...s.wd, binance: e.target.value })} />
+            <input
+              type="text"
+              inputMode="decimal"
+              id="wd-binance"
+              placeholder={netInfo ? (netInfo.enabled ? `${num(netInfo.fee)} en vivo` : 'red pausada') : 'sin dato'}
+              value={s.wd.binance}
+              onChange={(e) => set('wd', { ...s.wd, binance: e.target.value })}
+            />
           </label>
           <label className="f">
             Retiro MEXC→Binance (USDT)
-            <input type="text" inputMode="decimal" id="wd-mexc" placeholder="sin dato" value={s.wd.mexc} onChange={(e) => set('wd', { ...s.wd, mexc: e.target.value })} />
+            <input type="text" inputMode="decimal" id="wd-mexc" placeholder="cargalo de la app" value={s.wd.mexc} onChange={(e) => set('wd', { ...s.wd, mexc: e.target.value })} />
           </label>
         </div>
+        <p className="note">
+          {feesLive?.binanceWithdraw.ok
+            ? `El retiro desde Binance se lee solo (${netInfo ? `${netInfo.name}: ${num(netInfo.fee)} USDT, mínimo ${num(netInfo.min ?? 0)} USDT` : 'elegí una red'}). `
+            : 'No se pudo leer la comisión de retiro de Binance: cargala a mano. '}
+          La de MEXC no se publica sin iniciar sesión: miralo en MEXC → Retirar → USDT → misma red, y cargalo. Verificá que la otra plataforma acepte depósitos por esa red.
+        </p>
 
         <h3>Mi capital y mi margen</h3>
         <div className="grid3">

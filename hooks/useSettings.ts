@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import type { Platform } from '@/lib/p2p/types';
+import { LEGACY_NET } from '@/lib/p2p/fees';
 
 export interface Settings {
   fees: Record<Platform, { maker: string; taker: string }>;
@@ -20,7 +21,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   fees: { binance: { maker: '', taker: '' }, mexc: { maker: '', taker: '' } },
-  net: 'TRC20',
+  net: 'BSC', // código de red de Binance
   wd: { binance: '', mexc: '' },
   capArs: '',
   capUsdt: '',
@@ -54,7 +55,8 @@ export function useSettings() {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     try {
-      setS(merge(DEFAULT_SETTINGS, JSON.parse(localStorage.getItem(KEY) ?? 'null')));
+      const loaded = merge(DEFAULT_SETTINGS, JSON.parse(localStorage.getItem(KEY) ?? 'null'));
+      setS({ ...loaded, net: LEGACY_NET[loaded.net] ?? loaded.net });
     } catch {}
     setLoaded(true);
   }, []);
