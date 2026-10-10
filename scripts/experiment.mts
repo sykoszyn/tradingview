@@ -1,25 +1,29 @@
-// Experimento de variantes con historial separado:
-//  - AJUSTE: primeros 8 meses (los datos se recortan en el corte: nada posterior entra).
-//  - VALIDACIÓN: últimos 4 meses, UNA sola vez, con reglas ya cerradas.
+// Experimento con historial separado (ver docs/nuevas-estrategias.md):
+//  - AJUSTE: hasta el corte (los datos se recortan: nada posterior entra).
+//  - VALIDACIÓN: desde el corte, UNA sola vez por estrategia, con reglas ya cerradas
+//    y commiteadas. El corte es el fin de la última validación registrada (los datos
+//    ya validados no se reutilizan para validar), o cache.from + 8 meses la primera vez.
 // Uso:
-//   npm run experiment -- tune base a1 a15 b c d a1+b ...
-//   npm run experiment -- validate <variante>      (se bloquea después de correr una vez)
+//   BT_CACHE=datos.json npm run experiment -- tune base a1 c zonas-4h a1+c …
+//   BT_CACHE=datos.json npm run experiment -- validate <id del registro>
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { DEFAULT_CONFIG, type AppConfig } from '../lib/config/defaults';
+import { BASE_CONFIG, type AppConfig } from '../lib/config/defaults';
 import { sanitizeConfig } from '../lib/config/schema';
 import { makeFetchJson, resolveResource } from '../lib/data/market-service';
 import { fetchMinuteWindows, type KlinePager } from '../lib/backtest/history';
 import { runBacktest, type BacktestDataset, type BacktestOptions } from '../lib/backtest/run';
 import { computeStats } from '../lib/backtest/metrics';
 import { compareWithRandom } from '../lib/backtest/random';
+import { latestValidationEnd, STRATEGIES } from '../lib/strategies/registry';
+import { applyPatch, STRATEGY_PATCHES, type StrategyId } from '../lib/strategies/patches';
 import type { Candle } from '../lib/types';
 
 const DAY = 86_400_000;
 const [mode, ...names] = process.argv.slice(2);
 const cachePath = process.env.BT_CACHE!;
-const lockPath = process.env.VALIDATION_LOCK!;
-if (!cachePath || !lockPath) throw new Error('Definí BT_CACHE y VALIDATION_LOCK');
+if (!cachePath) throw new Error('Definí BT_CACHE (archivo creado con BT_CACHE=… npm run backtest)');
 
+/** Variantes de la familia "zonas" (sobre la base de 1h) usadas en el experimento original. */
 export const VARIANTS: Record<string, object> = {
   base: {},
   a1: { plan: { stopMode: 'atr', atrMultiplier: 1 } },
@@ -35,17 +39,19 @@ function merge(a: any, b: any): any {
   return out;
 }
 export function variantConfig(name: string): AppConfig {
+  if (name in STRATEGY_PATCHES) return applyPatch(BASE_CONFIG, name as StrategyId);
   const patch = name.split('+').reduce((acc, n) => {
     if (!VARIANTS[n]) throw new Error(`Variante desconocida: ${n}`);
     return merge(acc, VARIANTS[n]);
   }, {});
-  const { config, corrections } = sanitizeConfig(merge(DEFAULT_CONFIG, patch));
-  if (corrections.length) throw new Error(corrections.join(' '));
-  return config;
+  const { corrections } = sanitizeConfig(merge(BASE_CONFIG, patch));
+  if (corrections.some((c) => !c.includes('Estrategia'))) throw new Error(corrections.join(' '));
+  return merge(BASE_CONFIG, patch) as AppConfig;
 }
 
 const cached = JSON.parse(readFileSync(cachePath, 'utf8')) as { datasets: BacktestDataset[]; range: { from: number; to: number } };
-const split = cached.range.from + 8 * 30.4 * DAY;
+const lastVal = latestValidationEnd();
+const split = Number(process.env.VALIDATION_FROM ?? (lastVal > cached.range.from ? lastVal : cached.range.from + 8 * 30.4 * DAY));
 const fetchJson = makeFetchJson();
 const pager: KlinePager = async (q) =>
   (await resolveResource({ resource: 'klines', provider: 'binance', market: q.market, symbol: q.symbol, interval: q.interval, startTime: q.startTime, limit: q.limit }, fetchJson, 'server')).data as Candle[];
@@ -101,8 +107,12 @@ if (mode === 'tune') {
     console.log(`                ${r.bySymbol.join(' · ')}`);
   }
 } else if (mode === 'validate') {
-  if (existsSync(lockPath)) throw new Error(`La validación ya se corrió (${lockPath}). Por protocolo no se vuelve a correr.`);
   const name = names[0];
+  if (!(name in STRATEGIES)) throw new Error(`"${name}" no está en lib/strategies/registry.ts: registrá la estrategia (con sus reglas cerradas) antes de validar.`);
+  const lockPath = new URL(`../lib/strategies/validations/${name}.json`, import.meta.url);
+  if (existsSync(lockPath)) throw new Error(`La validación de ${name} ya se corrió. Por protocolo no se vuelve a correr.`);
+  if (split < lastVal) throw new Error('El período de validación se superpone con datos ya usados para validar.');
+  if (cached.range.to - split < 60 * DAY) throw new Error('Hacen falta al menos 60 días de datos nuevos después del corte para validar. Descargá datos más recientes.');
   const frozen = variantConfig(name);
   writeFileSync(lockPath, JSON.stringify({ startedAt: new Date().toISOString(), variant: name, config: frozen }, null, 2));
   console.log(`VALIDACIÓN (única): ${day(split)} → ${day(cached.range.to)} · variante ${name}`);

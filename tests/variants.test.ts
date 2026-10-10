@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG, type AppConfig } from '@/lib/config/defaults';
+import { BASE_CONFIG, type AppConfig } from '@/lib/config/defaults';
 import { atr } from '@/lib/analysis/indicators';
 import { detectSetups, type SetupSignal } from '@/lib/analysis/setups';
 import { buildPlan } from '@/lib/plan/plan';
@@ -11,7 +11,7 @@ import { candles } from './helpers/candles';
 const zone = (low: number, high: number, touches = 4): Zone => ({ id: `z${low}`, low, high, mid: (low + high) / 2, touches, touches4h: 1, lastTouch: 0, firstTouch: 0, score: 5, pivots: [] });
 const trend = (t: TrendContext['trend']): TrendContext => ({ trend: t, emaFast: 0, emaSlow: 0, close4h: 0, vwap: 0, aboveVwap: true, explanation: '' });
 const withCfg = (a: Partial<AppConfig['analysis']> = {}, p: Partial<AppConfig['plan']> = {}): AppConfig => ({
-  ...DEFAULT_CONFIG, analysis: { ...DEFAULT_CONFIG.analysis, ...a }, plan: { ...DEFAULT_CONFIG.plan, ...p },
+  ...BASE_CONFIG, analysis: { ...BASE_CONFIG.analysis, ...a }, plan: { ...BASE_CONFIG.plan, ...p },
 });
 const pad: Array<[number, number, number, number, number]> = Array.from({ length: 20 }, () => [105, 105.2, 104.8, 105, 100]);
 const rebound = candles([...pad, [101, 101.5, 100.6, 101], [101, 101.2, 99.9, 100.9]]);

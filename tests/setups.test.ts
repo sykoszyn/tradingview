@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG, type AppConfig } from '@/lib/config/defaults';
+import { BASE_CONFIG, type AppConfig } from '@/lib/config/defaults';
 import { detectSetups, scoreConfidence } from '@/lib/analysis/setups';
 import type { Zone } from '@/lib/analysis/zones';
 import type { TrendContext } from '@/lib/analysis/trend';
@@ -11,7 +11,7 @@ const zone = (low: number, high: number, touches = 4, score = 5): Zone => ({
 const trend = (t: TrendContext['trend'], aboveVwap = true): TrendContext => ({
   trend: t, emaFast: 0, emaSlow: 0, close4h: 0, vwap: 0, aboveVwap, explanation: '',
 });
-const cfg = (patch: Partial<AppConfig['analysis']> = {}): AppConfig => ({ ...DEFAULT_CONFIG, analysis: { ...DEFAULT_CONFIG.analysis, ...patch } });
+const cfg = (patch: Partial<AppConfig['analysis']> = {}): AppConfig => ({ ...BASE_CONFIG, analysis: { ...BASE_CONFIG.analysis, ...patch } });
 
 /** 20 velas planas de relleno (para el promedio de volumen) + las velas del caso. */
 function series(rows: Array<[number, number, number, number, number?]>, base = 105) {

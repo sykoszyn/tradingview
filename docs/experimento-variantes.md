@@ -39,7 +39,7 @@ Lectura:
 
 ## Validación (2026-06-10 → 2026-10-09)
 
-Corrida única con la variante `c` (registro completo en `validacion-resultado.json`).
+Corrida única con la variante `c` (registro completo en `lib/strategies/validations/zonas-4h.json`).
 
 | Métrica | Valor |
 |---|---|

@@ -1,4 +1,5 @@
 // Todos los parámetros de la app en un solo lugar.
+import { applyPatch, DEFAULT_STRATEGY_ID } from '../strategies/patches';
 // Convención: los campos que terminan en `Pct` están en PORCENTAJE (0.15 = 0,15 %).
 // Las funciones de /lib reciben fracciones; la conversión se hace con `pct()`.
 
@@ -25,6 +26,8 @@ export interface PhaseLimits {
 }
 
 export interface AppConfig {
+  /** Estrategia activa (ver lib/strategies). Define los campos de su "patch". */
+  strategyId: string;
   timezone: string;
   analysis: {
     pivotStrength: number; // velas a cada lado para confirmar un pivot
@@ -88,7 +91,9 @@ export interface AppConfig {
   };
 }
 
-export const DEFAULT_CONFIG: AppConfig = {
+/** Parámetros técnicos base (reglas originales en 1h). Los tests usan esta base. */
+export const BASE_CONFIG: AppConfig = {
+  strategyId: 'zonas-1h',
   timezone: 'America/Argentina/Buenos_Aires',
   analysis: {
     pivotStrength: 3,
@@ -151,5 +156,8 @@ export const DEFAULT_CONFIG: AppConfig = {
     blockFutures: true,
   },
 };
+
+/** Configuración por defecto de la app: estrategia "zonas-4h" (variante c). */
+export const DEFAULT_CONFIG: AppConfig = applyPatch(BASE_CONFIG, DEFAULT_STRATEGY_ID);
 
 export const pct = (v: number) => v / 100;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG, type AppConfig } from '@/lib/config/defaults';
+import { BASE_CONFIG, type AppConfig } from '@/lib/config/defaults';
 import { buildPlan, computePnl, type PlanInput } from '@/lib/plan/plan';
 import { planToText } from '@/lib/plan/plan-text';
 import type { SetupSignal } from '@/lib/analysis/setups';
@@ -14,7 +14,7 @@ const sig = (o: Partial<SetupSignal> = {}): SetupSignal => ({
   zone: SUP, stopAnchor: 2488, entry: 2496, volumeRatio: 1.2, counterTrend: false, confidence: 'media', confidenceScore: 5,
   reasons: ['x'], explanation: 'Rebote', ...o,
 });
-const input = (o: Partial<PlanInput> = {}, cfg: AppConfig = DEFAULT_CONFIG): PlanInput => ({
+const input = (o: Partial<PlanInput> = {}, cfg: AppConfig = BASE_CONFIG): PlanInput => ({
   signal: sig(), symbol: 'ETHUSDT', market: 'futures', zones: [SUP, z(2540, 2545), z(2580, 2585), z(2400, 2405)], filters: ETH, cfg,
   phase: { maxMarginUSDT: 25, maxLeverage: 2 }, ...o,
 });

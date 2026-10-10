@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG } from '@/lib/config/defaults';
+import { BASE_CONFIG } from '@/lib/config/defaults';
 import { fee, feeRates, grossPnl, netRiskReward } from '@/lib/plan/fees';
 
 describe('comisiones', () => {
   it('tasas por defecto: futuros 0,02 % / 0,05 %, spot 0,1 %', () => {
-    expect(feeRates('futures', DEFAULT_CONFIG)).toEqual({ maker: 0.0002, taker: 0.0005 });
-    expect(feeRates('spot', DEFAULT_CONFIG)).toEqual({ maker: 0.001, taker: 0.001 });
+    expect(feeRates('futures', BASE_CONFIG)).toEqual({ maker: 0.0002, taker: 0.0005 });
+    expect(feeRates('spot', BASE_CONFIG)).toEqual({ maker: 0.001, taker: 0.001 });
   });
   it('se calculan sobre el NOCIONAL, no sobre el margen', () => {
     // 0,01 ETH a 2500 = 25 USDT de nocional (con 2x el margen sería 12,5)

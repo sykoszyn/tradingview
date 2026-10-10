@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG } from '@/lib/config/defaults';
+import { BASE_CONFIG } from '@/lib/config/defaults';
 import { runBacktest, type BacktestDataset } from '@/lib/backtest/run';
 import { computeStats } from '@/lib/backtest/metrics';
 import type { Candle, SymbolFilters } from '@/lib/types';
@@ -27,7 +27,7 @@ function synthetic(n: number): Candle[] {
 
 const c1h = synthetic(2400);
 const ds = (c: Candle[]): BacktestDataset => ({ symbol: 'ETHUSDT', market: 'futures', c1h: c, c4h: aggregate(c), c15m: [], funding: [], filters: ETH });
-const opts = { from: T0 + 1300 * HOUR, to: T0 + 2400 * HOUR, cfg: DEFAULT_CONFIG, phase: DEFAULT_CONFIG.phases.phase3, maxHoldHours: 168 };
+const opts = { from: T0 + 1300 * HOUR, to: T0 + 2400 * HOUR, cfg: BASE_CONFIG, phase: BASE_CONFIG.phases.phase3, maxHoldHours: 168 };
 
 describe('runBacktest', () => {
   const res = runBacktest([ds(c1h)], opts);

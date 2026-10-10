@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { analyzeLiquidation, liquidationPrice } from '@/lib/plan/liquidation';
 import { liquidationExtension } from '@/lib/plan/extensions';
 import { buildPlan } from '@/lib/plan/plan';
-import { DEFAULT_CONFIG } from '@/lib/config/defaults';
+import { BASE_CONFIG } from '@/lib/config/defaults';
 import type { BracketSet, SymbolFilters } from '@/lib/types';
 import type { Zone } from '@/lib/analysis/zones';
 
@@ -50,7 +50,7 @@ describe('regla stop vs. liquidación', () => {
     // stop a 20 % con 3x (liq ~33 %) → 20/33 = 60 % ✗ ; 2x (liq ~50 %) → 40 % ✓
     const ETH: SymbolFilters = { symbol: 'ETHUSDT', market: 'futures', tickSize: 0.01, stepSize: 0.001, minQty: 0.001, marketStepSize: 0.001, marketMinQty: 0.001, minNotional: 5, exchange: 'binance', fetchedAt: 0 };
     const z = (low: number, high: number): Zone => ({ id: `z${low}`, low, high, mid: (low + high) / 2, touches: 3, touches4h: 0, lastTouch: 0, firstTouch: 0, score: 1, pivots: [] });
-    const cfg = { ...DEFAULT_CONFIG, sizing: { riskPerTradeUSDT: 10, defaultLeverage: 3 }, plan: { ...DEFAULT_CONFIG.plan, minRR: 0.5, stopBufferPct: 0 } };
+    const cfg = { ...BASE_CONFIG, sizing: { riskPerTradeUSDT: 10, defaultLeverage: 3 }, plan: { ...BASE_CONFIG.plan, minRR: 0.5, stopBufferPct: 0 } };
     const r = buildPlan({
       signal: { id: 's', setup: 'rebote-soporte', direction: 'long', candleIndex: 0, signalTime: 0, zone: z(2400, 2500), stopAnchor: 2000, entry: 2500, volumeRatio: 1, counterTrend: false, confidence: 'media', confidenceScore: 4, reasons: [], explanation: '' },
       symbol: 'ETHUSDT', market: 'futures', zones: [z(2400, 2500), z(3000, 3010)], filters: ETH, cfg,

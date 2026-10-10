@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { DEFAULT_CONFIG, HARD_LIMITS, type AppConfig } from './defaults';
+import { applyPatch, DEFAULT_STRATEGY_ID, STRATEGY_PATCHES, type StrategyId } from '../strategies/patches';
 
 const pos = z.number().finite().positive();
 const nonNeg = z.number().finite().min(0);
@@ -7,6 +8,7 @@ const int = (min: number) => z.number().int().min(min);
 const phaseLimits = z.object({ maxMarginUSDT: pos, maxLeverage: pos });
 
 export const configSchema = z.object({
+  strategyId: z.string().min(1),
   timezone: z.string().min(1),
   analysis: z.object({
     pivotStrength: int(1),
@@ -94,7 +96,13 @@ export function sanitizeConfig(input: unknown): { config: AppConfig; corrections
       merged = setPath(merged, issue.path as (string | number)[], getPath(DEFAULT_CONFIG, issue.path as (string | number)[]));
     }
   }
-  const c: AppConfig = structuredClone(merged);
+  let c: AppConfig = structuredClone(merged);
+  // Los campos que definen la estrategia no se editan sueltos: siempre salen de la estrategia elegida.
+  if (!(c.strategyId in STRATEGY_PATCHES)) {
+    corrections.push(`Estrategia "${c.strategyId}" desconocida, se usó "${DEFAULT_STRATEGY_ID}".`);
+    c.strategyId = DEFAULT_STRATEGY_ID;
+  }
+  c = applyPatch(c, c.strategyId as StrategyId);
 
   const levFields: Array<[string, () => number, (v: number) => void]> = [
     ['sizing.defaultLeverage', () => c.sizing.defaultLeverage, (v) => (c.sizing.defaultLeverage = v)],
