@@ -15,9 +15,9 @@ import type { WorkerRequest, WorkerResponse } from '@/workers/backtest.worker';
 const DAY = 86_400_000;
 export const SUMMARY_KEY = 'cpa.backtest.summary.v1';
 
-const pager: KlinePager = async (q) =>
+export const pager: KlinePager = async (q) =>
   (await fetchKlines(q.symbol, q.market, q.interval, { startTime: q.startTime, limit: q.limit })).data as Candle[];
-const fpager: FundingPager = async (q) => (await fetchFunding(q.symbol, { startTime: q.startTime, limit: q.limit })).data as FundingRatePoint[];
+export const fpager: FundingPager = async (q) => (await fetchFunding(q.symbol, { startTime: q.startTime, limit: q.limit })).data as FundingRatePoint[];
 
 export interface BacktestRun {
   result: BacktestResult;
@@ -26,7 +26,14 @@ export interface BacktestRun {
   sources: string[];
 }
 
-function runWorker(req: WorkerRequest, onProgress: (v: number) => void): Promise<BacktestResult> {
+export function runWorker(req: WorkerRequest, onProgress: (v: number) => void): Promise<BacktestResult> {
+  return callWorker(req, onProgress).then((m) => {
+    if (m.type !== 'done') throw new Error('Respuesta inesperada del Worker');
+    return m.result;
+  });
+}
+
+export function callWorker(req: WorkerRequest, onProgress: (v: number) => void = () => {}): Promise<Exclude<WorkerResponse, { type: 'progress' | 'error' }>> {
   return new Promise((resolve, reject) => {
     const w = new Worker(new URL('../workers/backtest.worker.ts', import.meta.url), { type: 'module' });
     w.onmessage = (ev: MessageEvent<WorkerResponse>) => {
@@ -34,8 +41,8 @@ function runWorker(req: WorkerRequest, onProgress: (v: number) => void): Promise
       if (m.type === 'progress') onProgress(m.value);
       else {
         w.terminate();
-        if (m.type === 'done') resolve(m.result);
-        else reject(new Error(m.message));
+        if (m.type === 'error') reject(new Error(m.message));
+        else resolve(m);
       }
     };
     w.onerror = (e) => {
