@@ -1,0 +1,38 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+  font-feature-settings: 'tnum';
+}
+
+@utility card {
+  @apply rounded-xl border border-slate-800 bg-slate-900/70 p-3;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition active:scale-[0.98] disabled:opacity-40;
+}
+@utility btn-primary {
+  @apply btn bg-sky-600 text-white hover:bg-sky-500;
+}
+@utility btn-ghost {
+  @apply btn border border-slate-700 bg-slate-800/60 text-slate-200 hover:bg-slate-700;
+}
+@utility input {
+  @apply w-full rounded-lg border border-slate-700 bg-slate-950 px-2 py-1.5 text-sm text-slate-100 outline-none focus:border-sky-500;
+}
+@utility label {
+  @apply text-xs text-slate-400;
+}
+
+.table-compact th {
+  @apply px-2 py-1 text-left text-[11px] font-medium uppercase tracking-wide text-slate-400;
+}
+.table-compact td {
+  @apply px-2 py-1 text-sm;
+}
