@@ -269,3 +269,15 @@ describe('comisiones', () => {
     expect(same.profit).toBeCloseTo((300 - 0.1) * 1450 - 300 * 1440, 6);
   });
 });
+
+describe('datos incompletos', () => {
+  it('si falta el retiro, el escenario queda incompleto (no puede ser la mejor jugada)', () => {
+    const best = { binance: { bid: 1600, ask: 1603 }, mexc: { bid: 1595, ask: 1596.7 } };
+    const r = scenario('mexc', 'binance', best, calc({ withdrawUsdt: { binance: 0.01, mexc: null } }), 'maker');
+    expect(r.ok).toBe(true);
+    expect(r.incomplete).toBe(true);
+    expect(r.missing.join(' ')).toMatch(/retiro desde MEXC/);
+    const ok = scenario('mexc', 'binance', best, calc({ withdrawUsdt: { binance: 0.01, mexc: 1 } }), 'maker');
+    expect(ok.incomplete).toBe(false);
+  });
+});

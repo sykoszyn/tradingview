@@ -148,3 +148,9 @@ footer { color: var(--muted); font-size: .85rem; text-align: center; padding-top
 .toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+/* El resumen toma el color del semáforo: verde solo cuando conviene */
+.hero.hero-ok { background: var(--ok); color: var(--surface); }
+.hero.hero-warn { background: var(--warn-bg); color: var(--ink); border: 2px solid var(--warn); }
+.hero.hero-bad, .hero.hero-na { background: var(--surface); color: var(--ink); border: 2px solid var(--line); }
+.hero.hero-bad { border-color: var(--bad); }
+.hero.hero-warn .play, .hero.hero-bad .play, .hero.hero-na .play { border-top-color: var(--line); }

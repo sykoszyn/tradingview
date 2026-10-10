@@ -72,6 +72,8 @@ export interface Scenario {
   cross: boolean;
   W: number;
   missing: string[]; // datos que faltan (comisiones, retiro) y se tomaron como 0
+  /** Falta algún dato: el resultado no es confiable y no puede ser "la mejor jugada". */
+  incomplete: boolean;
   q?: number;
   example?: boolean;
   perUsdt?: number;
@@ -92,7 +94,7 @@ export function scenario(buyPl: Platform, sellPl: Platform, best: Record<Platfor
   const cross = buyPl !== sellPl;
   const wRaw = cross ? s.withdrawUsdt[buyPl] : 0;
   if (cross && wRaw === null) missing.push(`costo de retiro desde ${buyPl === 'binance' ? 'Binance' : 'MEXC'}`);
-  const base: Scenario = { buyPl, sellPl, ok: false, B, S, cross, W: wRaw ?? 0, missing };
+  const base: Scenario = { buyPl, sellPl, ok: false, B, S, cross, W: wRaw ?? 0, missing, incomplete: missing.length > 0 };
   if (B === null || S === null) return base;
   const fb = fbRaw ?? 0;
   const fs = fsRaw ?? 0;

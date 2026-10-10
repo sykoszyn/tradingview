@@ -161,24 +161,29 @@ export function MesaP2P() {
 
 // ---------------- Resumen ----------------
 function Summary({ results, mode, minMargin }: { results: Scenario[]; mode: 'maker' | 'taker'; minMargin: number }) {
-  const valid = results.filter((r) => r.ok);
-  const best = valid.length ? valid.reduce((a, b) => ((b.pct ?? -Infinity) > (a.pct ?? -Infinity) ? b : a)) : null;
+  const better = (a: Scenario, b: Scenario) => ((b.pct ?? -Infinity) > (a.pct ?? -Infinity) ? b : a);
+  // Solo escenarios con todos los datos pueden ser "la mejor jugada".
+  const complete = results.filter((r) => r.ok && !r.incomplete);
+  const best = complete.length ? complete.reduce(better) : null;
+  const pending = results.filter((r) => r.ok && r.incomplete && (r.pct ?? -Infinity) > (best?.pct ?? -Infinity));
   const how = mode === 'maker' ? ' (con tu anuncio)' : '';
+  const tone = !best ? 'na' : best.light;
   return (
-    <section className="card hero" aria-live="polite">
+    <section className={`card hero hero-${tone}`} aria-live="polite">
       <span className="label">Resumen</span>
       {best ? (
         <div className="lines">
+          {best.light === 'bad' && <p className="empty">El caso menos malo sería:</p>}
           <p>
-            Comprá en <strong>{PLAT_NAME[best.buyPl]}</strong> a <b>{ars(best.B)}</b>
+            {best.light === 'bad' ? 'Comprar' : 'Comprá'} en <strong>{PLAT_NAME[best.buyPl]}</strong> a <b>{ars(best.B)}</b>
             {how}
           </p>
           <p>
-            Vendé en <strong>{PLAT_NAME[best.sellPl]}</strong> a <b>{ars(best.S)}</b>
+            {best.light === 'bad' ? 'Vender' : 'Vendé'} en <strong>{PLAT_NAME[best.sellPl]}</strong> a <b>{ars(best.S)}</b>
             {how}
           </p>
           <p>
-            Ganás <b>{ars(best.perUsdt)}</b> por USDT ({pct(best.pct)})
+            {best.perUsdt! >= 0 ? 'Ganás' : 'Perdés'} <b>{ars(Math.abs(best.perUsdt!))}</b> por USDT ({pct(best.pct)})
             {!best.example && (
               <>
                 {' '}
@@ -188,18 +193,24 @@ function Summary({ results, mode, minMargin }: { results: Scenario[]; mode: 'mak
           </p>
         </div>
       ) : (
-        <p className="empty">Todavía no hay precios utilizables. Esperá la próxima lectura o tocá "Actualizar ahora".</p>
+        <p className="empty">Todavía no hay un escenario con todos los datos. Esperá la próxima lectura o completá lo que falta en Mi configuración.</p>
       )}
       <div className="play">
         <strong>La mejor jugada ahora: </strong>
         {!best
-          ? 'sin datos.'
+          ? 'sin datos suficientes.'
           : best.light === 'ok'
             ? `${best.cross ? `comprar en ${PLAT_NAME[best.buyPl]}, pasar los USDT y vender en ${PLAT_NAME[best.sellPl]}` : `comprar y vender dentro de ${PLAT_NAME[best.buyPl]}`}. Supera tu ganancia mínima.`
             : best.light === 'warn'
-              ? `${best.cross ? `${PLAT_NAME[best.buyPl]} → ${PLAT_NAME[best.sellPl]}` : `dentro de ${PLAT_NAME[best.buyPl]}`}, pero queda justo: gana menos que tu mínimo de ${num(minMargin * 100)} %.`
+              ? `no operar todavía. Lo mejor (${best.cross ? `${PLAT_NAME[best.buyPl]} → ${PLAT_NAME[best.sellPl]}` : `dentro de ${PLAT_NAME[best.buyPl]}`}) gana menos que tu mínimo de ${num(minMargin * 100)} %.`
               : 'no operar. Con estos precios ningún camino deja ganancia después de comisiones.'}
+        {best && mode === 'maker' && best.light !== 'bad' && ' Ojo: con anuncios propios ganás solo si te toman las dos órdenes, y eso puede tardar.'}
       </div>
+      {pending.map((r) => (
+        <p key={r.buyPl + r.sellPl} className="play">
+          {PLAT_NAME[r.buyPl]} → {PLAT_NAME[r.sellPl]} podría dar {pct(r.pct)}, pero falta {r.missing.join(' y ')}. Cargalo en Mi configuración para saber si conviene.
+        </p>
+      ))}
     </section>
   );
 }
@@ -396,7 +407,7 @@ function ScenarioCard({ r, title, usable, mode, net, calc }: { r: Scenario; titl
     <div className={`sc ${r.light}`}>
       <div className="status-row">
         <h3>{title}</h3>
-        <span className={`light ${r.light}`}>{lightText[r.light!]}</span>
+        <span className={`light ${r.incomplete ? 'na' : r.light}`}>{r.incomplete ? 'Falta un dato' : lightText[r.light!]}</span>
       </div>
       <p className="note">
         Comprás a {ars(r.B)} · vendés a {ars(r.S)}
@@ -419,7 +430,7 @@ function ScenarioCard({ r, title, usable, mode, net, calc }: { r: Scenario; titl
       <p className="note">
         Ciclo de {num(r.q)} USDT{r.example ? ' (ejemplo: cargá tu capital en Mi configuración)' : ''}. Comisiones: {feeLine(r, calc, mode)}.
       </p>
-      {r.missing.length > 0 && <p className="warnline">Sin cargar: {r.missing.join(', ')}. Se tomó como 0.</p>}
+      {r.missing.length > 0 && <p className="warnline">Sin cargar: {r.missing.join(', ')}. El resultado de arriba lo toma como 0 y no es confiable hasta que lo cargues.</p>}
     </div>
   );
 }
