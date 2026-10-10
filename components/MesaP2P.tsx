@@ -278,12 +278,6 @@ function PlatformBox({ pl, book, stale, sides }: { pl: Platform; book: PlatformB
         <p>
           <strong>Sin datos de {PLAT_NAME[pl]}.</strong> {stale ? 'La lectura quedó vieja.' : book?.error ?? 'Esperando la primera lectura.'}
         </p>
-        {pl === 'mexc' && book && !book.ok && (
-          <p className="note">
-            MEXC bloquea las conexiones desde EE.UU. y no publica el endpoint que usa su página P2P. Cuando tengamos esa dirección (copiada desde tu
-            navegador), MEXC se lee igual que Binance.
-          </p>
-        )}
       </div>
     );
   }
@@ -492,6 +486,14 @@ function AdCard({ pl, side, s, calc, best, usable }: { pl: Platform; side: AdSid
           ? `${ars(calc.step)} arriba del mejor comprador (${ars(best.bid)}), así quedás primero.`
           : sg.note ?? 'Bajado para respetar tu ganancia mínima.'
         : `${ars(calc.step)} debajo del mejor vendedor (${ars(best.ask)}), así quedás primero.`;
+  const crossed =
+    price !== null &&
+    ((side === 'buy' && best.ask !== null && price >= best.ask) || (side === 'sell' && best.bid !== null && price <= best.bid));
+  const crossedWhy = crossed
+    ? side === 'buy'
+      ? ` Ojo: este precio es igual o mayor que el del mejor vendedor (${ars(best.ask)}). Conviene tomar su anuncio en vez de publicar.`
+      : ` Ojo: este precio es igual o menor que lo que paga el mejor comprador (${ars(best.bid)}). Conviene tomar su anuncio en vez de publicar.`
+    : '';
   return (
     <details className="ad" open={pl === 'binance' && side === 'buy'}>
       <summary>
@@ -507,7 +509,7 @@ function AdCard({ pl, side, s, calc, best, usable }: { pl: Platform; side: AdSid
           why="Recomiendo fijo: controlás exacto tu margen. Como la web se actualiza cada minuto, ajustalo cuando cambie el precio sugerido. El flotante se mueve solo con el precio de referencia, sirve si no vas a mirar la app."
           copy={floatPct !== null ? `Fijo · o flotante ${num(floatPct)} %` : 'Fijo'}
         />
-        <Field k="Precio" v={<span className="num">{ars(price)}</span>} why={priceWhy} copy={price !== null ? price.toFixed(2).replace('.', ',') : ''} />
+        <Field k="Precio" v={<span className="num">{ars(price)}</span>} why={priceWhy + crossedWhy} copy={price !== null ? price.toFixed(2).replace('.', ',') : ''} />
         <Field
           k="Cantidad total"
           v={<span className="num">{qty ? `${num(qty)} USDT` : 'sin dato'}</span>}

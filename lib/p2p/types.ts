@@ -17,6 +17,8 @@ export interface Ad {
   finishRate: number | null; // 0–1 (últimos 30 días)
   orders: number | null; // órdenes completadas (últimos 30 días)
   nick: string;
+  /** Anuncio que no está disponible para cualquiera (ej. "exclusivo para usuarios nuevos" en MEXC). */
+  restricted?: string;
 }
 
 export interface PlatformBook {

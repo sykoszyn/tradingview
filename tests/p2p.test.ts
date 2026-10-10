@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import fixture from './fixtures/binance.json';
 import { binanceBody, fetchBinance, parseBinance } from '@/lib/p2p/binance';
-import { fetchMexc } from '@/lib/p2p/mexc';
+import mexc from './fixtures/mexc.json';
+import { _resetMexcCache, fetchMexc, mexcMarketUrl, parseMexc, parseMexcMethods } from '@/lib/p2p/mexc';
 import { filterSide, median, type FilterSettings } from '@/lib/p2p/filters';
 import { methodMatches } from '@/lib/p2p/methods';
 import { cycleMargin, parseNum, scenario, suggest, type CalcSettings } from '@/lib/p2p/calc';
@@ -53,12 +54,67 @@ describe('Binance (respuesta real guardada)', () => {
   });
 });
 
-describe('MEXC', () => {
-  it('sin endpoint identificado: sin datos, nunca precios inventados', async () => {
-    const b = await fetchMexc();
+describe('MEXC (respuestas reales guardadas)', () => {
+  const methods = parseMexcMethods(mexc['mexc-methods']);
+  const sellers = parseMexc(mexc['mexc-sellers'], methods);
+  const buyers = parseMexc(mexc['mexc-buyers'], methods);
+  it('traduce los ids de métodos de pago', () => {
+    expect(methods.get('207')).toBe('Mercadopago');
+    expect(methods.get('235')).toBe('Bank Transfer (Argentina)');
+  });
+  it('lee precio, límites, disponible, métodos y estadísticas', () => {
+    const a = sellers.find((x) => !x.restricted)!;
+    expect(a.price).toBeGreaterThan(0);
+    expect(a.max!).toBeGreaterThan(a.min!);
+    expect(a.available).toBeGreaterThan(0);
+    expect(a.methods.length).toBeGreaterThan(0);
+    expect(a.finishRate).not.toBeNull();
+    expect(a.orders).not.toBeNull();
+  });
+  it('marca los anuncios exclusivos para usuarios nuevos y el filtro los descarta', () => {
+    const promo = sellers.filter((x) => x.restricted);
+    expect(promo.length).toBeGreaterThan(0);
+    const r = filterSide(sellers, 'sellers', NO_FILTER);
+    expect(r.kept.some((x) => x.restricted)).toBe(false);
+    expect(r.dropped.filter((d) => d.reason === 'exclusivo').length).toBe(promo.length);
+  });
+  it('SELL = vendedores y BUY = compradores (al revés que Binance)', () => {
+    expect(mexcMarketUrl('sellers')).toContain('tradeType=SELL');
+    expect(mexcMarketUrl('sellers')).toContain('adOrderSort=0');
+    expect(mexcMarketUrl('buyers')).toContain('tradeType=BUY');
+    expect(mexcMarketUrl('buyers')).toContain('adOrderSort=1');
+    // Con el filtro de atípicos (en los datos reales hay un vendedor a 1.399, lejos de la mediana)
+    const f = { ...NO_FILTER, outlierPct: 3 };
+    const sel = filterSide(sellers, 'sellers', f);
+    const bestAsk = sel.best!;
+    const bestBid = filterSide(buyers, 'buyers', f).best!;
+    expect(sel.dropped.some((d) => d.reason === 'atipico' && d.ad.price === 1399)).toBe(true);
+    // Mismo rango de precios (en P2P el mejor vendedor puede quedar apenas por debajo del mejor comprador)
+    expect(Math.abs(bestAsk - bestBid) / bestBid).toBeLessThan(0.02);
+    // vendedores del más barato al más caro, compradores del que más paga al que menos
+    expect(sel.kept.map((a) => a.price)).toEqual([...sel.kept.map((a) => a.price)].sort((a, b) => a - b));
+  });
+  it('consulta métodos, vendedores y compradores con los encabezados de la página', async () => {
+    _resetMexcCache();
+    const urls: string[] = [];
+    const book = await fetchMexc(async (url, headers) => {
+      urls.push(url);
+      expect(headers['X-Client']).toBe('H5');
+      if (url.includes('/payment/method')) return mexc['mexc-methods'];
+      return url.includes('tradeType=SELL') ? mexc['mexc-sellers'] : mexc['mexc-buyers'];
+    });
+    expect(book.ok).toBe(true);
+    expect(book.sellers.length).toBe(10);
+    expect(urls[0]).toBe('https://www.mexc.com/api/platform/p2p/api/payment/method?currency=ARS');
+  });
+  it('si MEXC falla: sin datos, nunca precios inventados', async () => {
+    _resetMexcCache();
+    const b = await fetchMexc(async () => {
+      throw new Error('HTTP 403');
+    });
     expect(b.ok).toBe(false);
     expect(b.sellers).toEqual([]);
-    expect(b.buyers).toEqual([]);
+    expect(b.error).toMatch(/403/);
   });
 });
 

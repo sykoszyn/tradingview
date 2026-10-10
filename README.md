@@ -29,19 +29,31 @@ Content-Type: application/json
 - Si `p2p.binance.com` falla, se reintenta con el mismo camino en `www.binance.com`.
 - El código está en `lib/p2p/binance.ts` y hay una respuesta real guardada para los tests en `tests/fixtures/binance.json`.
 
-### MEXC: pendiente (hoy muestra "sin datos de MEXC")
+### MEXC: funcionando
 
-- **No se pudo ver la página:** la página P2P de MEXC (`https://www.mexc.com/buy-crypto/p2p`) bloquea las conexiones desde EE.UU. (Akamai responde "Access Denied"). Por eso no se pudo inspeccionar qué endpoint usa, y **no se inventó**.
-- **La API oficial no sirve tal cual:** MEXC tiene una API P2P oficial con `GET /api/v3/fiat/market/ads/pagination` ("Get Market Ads List", con `fiatUnit` y `coinId` obligatorios). Pide API key con permiso "P2P Account Read" y no publica el formato de la respuesta, así que no se usa.
+Son los endpoints que usa la propia página P2P de MEXC. Se identificaron desde el navegador (DevTools → Red) el 10/10/2026 y se verificaron con respuestas reales.
 
-**Cómo destrabarlo (1 minuto, desde una compu en Argentina):**
+```
+GET https://www.mexc.com/api/platform/p2p/api/market
+    ?blockTrade=false&countryCode=&tradeType=SELL&currency=ARS&payMethod=&amount=
+    &coinId=128f589271cb4951b03e71e6323eb7be&page=1&pageSize=20&certifiedMerchant=false
+    &allowTrade=false&haveTrade=false&follow=false&adsType=1&adOrderSortField=price&adOrderSort=0
+Encabezados: language: en-US · X-Client: H5 · x-platform-type: h5 · Referer: https://www.mexc.com/buy-crypto/p2p/buy/USDT/ARS
+```
 
-1. Abrí `https://www.mexc.com/buy-crypto/p2p` en Chrome, con USDT y ARS elegidos.
-2. Apretá F12 → pestaña **Red** (Network) → filtro **Fetch/XHR**.
-3. Recargá la página y buscá la llamada que devuelve la lista de anuncios (tiene los precios en la respuesta).
-4. Clic derecho sobre esa llamada → **Copiar → Copiar como cURL**, y pegámelo junto con un pedazo de la respuesta.
-
-Con eso se completan `MEXC_ENDPOINT` y el lector en `lib/p2p/mexc.ts`, igual que con Binance.
+- `coinId=128f…` es USDT.
+- **Ojo, al revés que Binance:**
+  - `tradeType=SELL` (ordenado con `adOrderSort=0`) trae a quienes **venden** USDT, lo que ves en "Buy".
+  - `tradeType=BUY` (con `adOrderSort=1`) trae a quienes **compran** USDT.
+- De cada anuncio se usa:
+  - `price`, `minTradeLimit`, `maxTradeLimit`, `availableQuantity`
+  - `payMethod`: ids separados por coma
+  - `merchant.merchantType`: `merchant` y `prime` cuentan como comerciantes
+  - `merchantStatistics.thirtyDayCompletionRate` y `merchantStatistics.doneLastMonthCount`
+- Los anuncios con `orderTag.i18nKey = "mc_merchant_new_user_exclusive"` ("Flash Sale") son **solo para usuarios nuevos**: se descartan siempre.
+- Los ids de métodos de pago se traducen con `GET https://www.mexc.com/api/platform/p2p/api/payment/method?currency=ARS` (por ejemplo, `207` = Mercadopago).
+- MEXC bloquea su página web desde EE.UU., pero estos endpoints respondieron. Si en algún momento fallan, la web muestra "Sin datos de MEXC".
+- El código está en `lib/p2p/mexc.ts` y hay respuestas reales guardadas en `tests/fixtures/mexc.json`.
 
 Si una plataforma falla, la web muestra "Sin datos de Binance/MEXC" y **no calcula con valores anteriores**. Las lecturas de más de 2 minutos tampoco se usan.
 

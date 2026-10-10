@@ -1,0 +1,564 @@
+{
+ "mexc-sellers": {
+  "code": 0,
+  "msg": "success",
+  "data": [
+   {
+    "id": "a1763573641157285889",
+    "price": 1473.0,
+    "availableQuantity": 748.0,
+    "tradeType": 1,
+    "payMethod": "227,207,228,235,232,230",
+    "minTradeLimit": 147300.0,
+    "maxTradeLimit": 154665.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": {
+     "i18nKey": "mc_merchant_new_user_exclusive"
+    },
+    "merchant": {
+     "nickName": "CriptoNova",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 49,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1708620110129881092",
+    "price": 1477.0,
+    "availableQuantity": 673.0,
+    "tradeType": 1,
+    "payMethod": "207,235,227,232,230",
+    "minTradeLimit": 147700.0,
+    "maxTradeLimit": 155085.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": {
+     "i18nKey": "mc_merchant_new_user_exclusive"
+    },
+    "merchant": {
+     "nickName": "EnzoFernandux",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 60,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1620205390842115073",
+    "price": 1596.16,
+    "availableQuantity": 405.7084,
+    "tradeType": 1,
+    "payMethod": "235",
+    "minTradeLimit": 79808.0,
+    "maxTradeLimit": 159616.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": {
+     "i18nKey": "mc_merchant_featured_ads"
+    },
+    "merchant": {
+     "nickName": "ISADALMI",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 275,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1622980583960428544",
+    "price": 1597.29,
+    "availableQuantity": 401.7815,
+    "tradeType": 1,
+    "payMethod": "235",
+    "minTradeLimit": 79864.5,
+    "maxTradeLimit": 159729.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": {
+     "i18nKey": "mc_merchant_featured_ads"
+    },
+    "merchant": {
+     "nickName": "COSME-FULANITO",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 355,
+     "thirtyDayCompletionRate": 0.99,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9916"
+    }
+   },
+   {
+    "id": "a1715259236216361985",
+    "price": 1603.0,
+    "availableQuantity": 368.3719,
+    "tradeType": 1,
+    "payMethod": "236,237,228,238,207,230,231,227,232",
+    "minTradeLimit": 40300.0,
+    "maxTradeLimit": 590500.15,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": {
+     "i18nKey": "mc_merchant_featured_ads"
+    },
+    "merchant": {
+     "nickName": "verito86",
+     "merchantType": "prime",
+     "identityVerification": true,
+     "badge": "3"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 194,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1746408847308268545",
+    "price": 1603.0,
+    "availableQuantity": 500.0,
+    "tradeType": 1,
+    "payMethod": "207,227,229,230,231,232,235,236,237,238",
+    "minTradeLimit": 40500.0,
+    "maxTradeLimit": 801500.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": {
+     "i18nKey": "mc_merchant_featured_ads"
+    },
+    "merchant": {
+     "nickName": "Vicomul",
+     "merchantType": "prime",
+     "identityVerification": true,
+     "badge": "3"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 173,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1607279807023698944",
+    "price": 1399.0,
+    "availableQuantity": 921.9032,
+    "tradeType": 1,
+    "payMethod": "235",
+    "minTradeLimit": 20000.0,
+    "maxTradeLimit": 1289742.57,
+    "expirationTime": 30,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "Tam USDT",
+     "merchantType": "legacy",
+     "identityVerification": true,
+     "badge": "4"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 573,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1823588258567302150",
+    "price": 1608.0,
+    "availableQuantity": 717.6998,
+    "tradeType": 1,
+    "payMethod": "227,207,232,235,228",
+    "minTradeLimit": 2000.0,
+    "maxTradeLimit": 1154061.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "JEO",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 50,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1802753698631512066",
+    "price": 1610.0,
+    "availableQuantity": 27.5883,
+    "tradeType": 1,
+    "payMethod": "235,229,236,230,227",
+    "minTradeLimit": 40000.0,
+    "maxTradeLimit": 44417.16,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "CinUriel411",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 11,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1828693703372001284",
+    "price": 1613.9,
+    "availableQuantity": 882.6137,
+    "tradeType": 1,
+    "payMethod": "232,227,207",
+    "minTradeLimit": 14000.0,
+    "maxTradeLimit": 1424450.25,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "URIECHEVERRIA",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 49,
+     "thirtyDayCompletionRate": 0.98,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9800"
+    }
+   }
+  ]
+ },
+ "mexc-buyers": {
+  "code": 0,
+  "msg": "success",
+  "data": [
+   {
+    "id": "a1820537062260593668",
+    "price": 1596.5,
+    "availableQuantity": 150.0,
+    "tradeType": 0,
+    "payMethod": "227,228,229,230,232,235,207,238",
+    "minTradeLimit": 7000.0,
+    "maxTradeLimit": 239475.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "lrosales",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 114,
+     "thirtyDayCompletionRate": 0.99,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9913"
+    }
+   },
+   {
+    "id": "a1819757757624564737",
+    "price": 1596.0,
+    "availableQuantity": 50.0,
+    "tradeType": 0,
+    "payMethod": "207,227,229,238,235,233,234,230,231,228",
+    "minTradeLimit": 7800.0,
+    "maxTradeLimit": 79800.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "diegosanroman",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 115,
+     "thirtyDayCompletionRate": 0.91,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9126"
+    }
+   },
+   {
+    "id": "a1704711715660243970",
+    "price": 1593.51,
+    "availableQuantity": 305.642,
+    "tradeType": 0,
+    "payMethod": "207,233,235,232,227,228,230,234",
+    "minTradeLimit": 150000.0,
+    "maxTradeLimit": 486906.03,
+    "expirationTime": 30,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "LinKJeT",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 57,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1527491993406381056",
+    "price": 1590.0,
+    "availableQuantity": 5000.0,
+    "tradeType": 0,
+    "payMethod": "235,232,228,234,233,230,227,207",
+    "minTradeLimit": 150000.0,
+    "maxTradeLimit": 7950000.0,
+    "expirationTime": 20,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "MartinCambio",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 3,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1776676581355229185",
+    "price": 1590.0,
+    "availableQuantity": 2000.0,
+    "tradeType": 0,
+    "payMethod": "227,207,228,229,230,232,235,236,237,238",
+    "minTradeLimit": 50000.0,
+    "maxTradeLimit": 3180000.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "MIGUELCAPRAROO",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 58,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1618973740250491904",
+    "price": 1589.2,
+    "availableQuantity": 2300.0,
+    "tradeType": 0,
+    "payMethod": "207,227,228,230,232,234,238",
+    "minTradeLimit": 25000.0,
+    "maxTradeLimit": 3600000.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "Hann Nandez",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 60,
+     "thirtyDayCompletionRate": 0.91,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9090"
+    }
+   },
+   {
+    "id": "a1834988888477370369",
+    "price": 1587.0,
+    "availableQuantity": 50.0,
+    "tradeType": 0,
+    "payMethod": "207,227,230,232,238,234",
+    "minTradeLimit": 2000.0,
+    "maxTradeLimit": 15000.0,
+    "expirationTime": 30,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "AlexRox",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 7,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1836351750319898625",
+    "price": 1586.0,
+    "availableQuantity": 1100.0,
+    "tradeType": 0,
+    "payMethod": "207,227,228,229,230,232,235,236,237,238",
+    "minTradeLimit": 100000.0,
+    "maxTradeLimit": 1741850.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "Instrader",
+     "merchantType": "normal",
+     "identityVerification": true,
+     "badge": "0"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 28,
+     "thirtyDayCompletionRate": 0.97,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9655"
+    }
+   },
+   {
+    "id": "a1538580112906153984",
+    "price": 1585.01,
+    "availableQuantity": 3022.4782,
+    "tradeType": 0,
+    "payMethod": "207,228,231,232,236",
+    "minTradeLimit": 30000.0,
+    "maxTradeLimit": 560000.0,
+    "expirationTime": 15,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "Nevermind",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 23,
+     "thirtyDayCompletionRate": 1.0,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "1.0000"
+    }
+   },
+   {
+    "id": "a1821198358375156741",
+    "price": 1584.5,
+    "availableQuantity": 20000.0,
+    "tradeType": 0,
+    "payMethod": "235",
+    "minTradeLimit": 50000.0,
+    "maxTradeLimit": 10000000.0,
+    "expirationTime": 30,
+    "priceType": 0,
+    "orderTag": null,
+    "merchant": {
+     "nickName": "COSME-FULANITO",
+     "merchantType": "merchant",
+     "identityVerification": true,
+     "badge": "1"
+    },
+    "merchantStatistics": {
+     "doneLastMonthCount": 355,
+     "thirtyDayCompletionRate": 0.99,
+     "completeRate": "1.0000",
+     "lastMonthCompleteRate": "0.9916"
+    }
+   }
+  ]
+ },
+ "mexc-methods": {
+  "code": 0,
+  "msg": "success",
+  "data": [
+   {
+    "id": 207,
+    "name": "Mercadopago"
+   },
+   {
+    "id": 227,
+    "name": "Lemon Cash"
+   },
+   {
+    "id": 228,
+    "name": "Uala"
+   },
+   {
+    "id": 229,
+    "name": "Uala"
+   },
+   {
+    "id": 230,
+    "name": "Naranja X"
+   },
+   {
+    "id": 231,
+    "name": "Banco del Sol"
+   },
+   {
+    "id": 232,
+    "name": "Banco Brubank"
+   },
+   {
+    "id": 233,
+    "name": "Banco Santander Argentina"
+   },
+   {
+    "id": 234,
+    "name": "BBVA"
+   },
+   {
+    "id": 235,
+    "name": "Bank Transfer (Argentina)"
+   },
+   {
+    "id": 236,
+    "name": "Prex"
+   },
+   {
+    "id": 237,
+    "name": "Reba"
+   },
+   {
+    "id": 238,
+    "name": "Belo app"
+   }
+  ]
+ }
+}

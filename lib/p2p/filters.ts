@@ -11,7 +11,7 @@ export interface FilterSettings {
   outlierPct: number; // descartar precios a más de este % de la mediana
 }
 
-export type DropReason = 'comerciante' | 'finalizacion' | 'ordenes' | 'metodo' | 'monto' | 'atipico';
+export type DropReason = 'exclusivo' | 'comerciante' | 'finalizacion' | 'ordenes' | 'metodo' | 'monto' | 'atipico';
 
 export interface FilteredSide {
   kept: Ad[]; // ordenados del mejor al peor
@@ -30,10 +30,11 @@ export function median(values: number[]): number | null {
 
 export function filterSide(ads: Ad[], side: Side, f: FilterSettings): FilteredSide {
   const dropped: FilteredSide['dropped'] = [];
-  const med = median(ads.map((a) => a.price));
+  const med = median(ads.filter((a) => !a.restricted).map((a) => a.price));
   const kept = ads.filter((a) => {
     let reason: DropReason | null = null;
-    if (med !== null && Math.abs(a.price - med) / med > f.outlierPct / 100) reason = 'atipico';
+    if (a.restricted) reason = 'exclusivo';
+    else if (med !== null && Math.abs(a.price - med) / med > f.outlierPct / 100) reason = 'atipico';
     else if (f.merchantOnly && !a.merchant) reason = 'comerciante';
     else if (a.finishRate === null || a.finishRate * 100 < f.minFinishRatePct) reason = 'finalizacion';
     else if (a.orders === null || a.orders < f.minOrders) reason = 'ordenes';
@@ -48,6 +49,7 @@ export function filterSide(ads: Ad[], side: Side, f: FilterSettings): FilteredSi
 }
 
 export const DROP_LABEL: Record<DropReason, string> = {
+  exclusivo: 'exclusivo para usuarios nuevos',
   comerciante: 'no es comerciante verificado',
   finalizacion: 'finalización baja',
   ordenes: 'pocas órdenes',
