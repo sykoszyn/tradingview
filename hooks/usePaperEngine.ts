@@ -5,7 +5,7 @@
 //  2) Paper automático: simula todas las señales operables de la estrategia activa.
 //  3) Cuando la muestra automática llega a 30 trades con expectativa > 0,15 R,
 //     calcula la línea base al azar del mismo período (en el Web Worker).
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AppConfig } from '@/lib/config/defaults';
 import { SYMBOLS, type Candle, type FundingRatePoint, type Market, type TradingSymbol } from '@/lib/types';
 import { fetchFunding, fetchKlines } from '@/lib/data/client';
@@ -66,6 +66,7 @@ export function usePaperEngine(journal: JournalApi, cfg: AppConfig, meta: Market
   const running = useRef(false);
   const dataRef = useRef<JournalData | null>(null);
   dataRef.current = journal.data;
+  const update = journal.update; // estable (useCallback): no usar el objeto `journal` como dependencia
 
   const tick = useCallback(async () => {
     const data = dataRef.current;
@@ -106,11 +107,13 @@ export function usePaperEngine(journal: JournalApi, cfg: AppConfig, meta: Market
             }
           }
       }
-      journal.update((d) => ({
-        ...d,
-        paper: mergePaper(d.paper, paper),
-        autoPaper: { ...d.autoPaper, cursor: { ...d.autoPaper.cursor, ...cursor } },
-      }));
+      const changed = paper.length !== data.paper.length || paper.some((t, k) => t !== data.paper[k]) || JSON.stringify(cursor) !== JSON.stringify(data.autoPaper.cursor);
+      if (changed)
+        update((d) => ({
+          ...d,
+          paper: mergePaper(d.paper, paper),
+          autoPaper: { ...d.autoPaper, cursor: { ...d.autoPaper.cursor, ...cursor } },
+        }));
       setError(null);
     } catch (e) {
       setError(`Paper trading: ${(e as Error).message}`);
@@ -118,7 +121,7 @@ export function usePaperEngine(journal: JournalApi, cfg: AppConfig, meta: Market
       running.current = false;
       setStatus(null);
     }
-  }, [cfg, meta.filters, meta.brackets, journal]);
+  }, [cfg, meta.filters, meta.brackets, update]);
 
   useEffect(() => {
     if (!journal.data || meta.loading) return;
@@ -157,28 +160,29 @@ export function usePaperEngine(journal: JournalApi, cfg: AppConfig, meta: Market
         opts: { from, to, cfg, phase: cfg.phases.phase2, maxHoldHours: 168 },
       });
       if (res.type === 'random-done')
-        journal.update((d) => ({ ...d, liveValidation: { computedAt: Date.now(), strategyId: cfg.strategyId, trades: st.trades, expectancyR: st.expectancyR, comparison: res.comparison } }));
+        update((d) => ({ ...d, liveValidation: { computedAt: Date.now(), strategyId: cfg.strategyId, trades: st.trades, expectancyR: st.expectancyR, comparison: res.comparison } }));
     } catch (e) {
       setError(`Línea base en vivo: ${(e as Error).message}`);
     } finally {
       setStatus(null);
     }
-  }, [cfg, meta.filters, journal]);
+  }, [cfg, meta.filters, update]);
 
-  const live = journal.data ? liveValidationStatus(journal.data.paper, cfg.strategyId, journal.data.liveValidation) : null;
+  const jd = journal.data;
+  const live = useMemo(() => (jd ? liveValidationStatus(jd.paper, cfg.strategyId, jd.liveValidation) : null), [jd?.paper, jd?.liveValidation, cfg.strategyId]);
   useEffect(() => {
     if (live?.needsRandom && !running.current) void computeLiveRandom();
   }, [live?.needsRandom, computeLiveRandom]);
 
   const simulate = useCallback(
     (plan: PaperTrade['plan']) => {
-      journal.update((d) => {
+      update((d) => {
         if (d.paper.some((t) => t.plan.id === plan.id)) return d;
         return { ...d, paper: [...d.paper, newPaperTrade(plan, cfg.strategyId, false)] };
       });
       setTimeout(() => void tick(), 500);
     },
-    [journal, cfg.strategyId, tick],
+    [update, cfg.strategyId, tick],
   );
 
   return { status, error, live, simulate, refresh: tick, computeLiveRandom };

@@ -19,14 +19,14 @@ export function MinimumsTable({ meta, market, phaseMaxMargin, phaseMaxLev }: { m
         <span className="text-[11px] text-slate-400">{src ? SOURCE_LABEL[src] : '…'}</span>
       </div>
       <div className="overflow-x-auto">
-        <table className="table-compact w-full">
+        <table className="table-compact w-full [&_td]:!px-1 [&_td]:!text-xs [&_th]:!px-1">
           <thead>
             <tr>
               <th>Par</th>
-              <th>Cant. mín.</th>
-              <th>Nocional mín.</th>
+              <th>Cant.</th>
+              <th>Nocional</th>
               {levs.map((l) => (
-                <th key={l}>Margen {l}x</th>
+                <th key={l}>{l}x</th>
               ))}
             </tr>
           </thead>
@@ -48,7 +48,7 @@ export function MinimumsTable({ meta, market, phaseMaxMargin, phaseMaxLev }: { m
                 <tr key={s} className="border-t border-slate-800">
                   <td className="font-medium">{s}</td>
                   <td>{formatStep(m.minQty, Math.max(f.stepSize, f.marketStepSize))}</td>
-                  <td>{fmt(m.minNotional)} USDT</td>
+                  <td>{fmt(m.minNotional)}</td>
                   {levs.map((l) => {
                     const mg = m.marginAt(l);
                     const ok = market === 'spot' ? mg <= phaseMaxMargin : l <= phaseMaxLev && mg <= phaseMaxMargin;
@@ -65,7 +65,7 @@ export function MinimumsTable({ meta, market, phaseMaxMargin, phaseMaxLev }: { m
         </table>
       </div>
       <p className="text-[11px] text-slate-400">
-        Nocional mínimo = max(MIN_NOTIONAL, cantidad mínima × precio), con la cantidad redondeada al stepSize. Verde: operable con tu fase actual
+        Valores en USDT. Columnas 1x/2x/3x = margen mínimo con ese apalancamiento. Nocional mínimo = max(MIN_NOTIONAL, cantidad mínima × precio), con la cantidad redondeada al stepSize. Verde: operable con tu fase actual
         (margen máx. {phaseMaxMargin} USDT{market === 'futures' ? `, hasta ${phaseMaxLev}x` : ''}). Se actualiza al iniciar y cada 1 hora.
       </p>
       {error && <p className="text-xs text-rose-400">Precios: {error}</p>}

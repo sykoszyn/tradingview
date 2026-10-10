@@ -8,6 +8,7 @@ import type { JournalApi } from './useJournal';
 
 export function usePhases(journal: JournalApi, cfg: AppConfig, backtest: BacktestSummary | null, live: LiveValidationStatus | null) {
   const d = journal.data;
+  const update = journal.update;
   const inputs: PhaseInputs | null = useMemo(
     () => (d ? { state: d.phase, cfg, backtest, paper: d.paper, real: d.real, live } : null),
     [d, cfg, backtest, live],
@@ -17,14 +18,14 @@ export function usePhases(journal: JournalApi, cfg: AppConfig, backtest: Backtes
   useEffect(() => {
     if (!inputs) return;
     const next = applyAutoTransitions(inputs);
-    if (next !== inputs.state) journal.update((j) => ({ ...j, phase: next }));
-  }, [inputs, journal]);
+    if (next !== inputs.state) update((j) => ({ ...j, phase: next }));
+  }, [inputs, update]);
 
   const view = useMemo(() => (inputs ? phaseView(inputs) : null), [inputs]);
   const confirm = useCallback(() => {
     if (!inputs) return;
     const next = confirmPhase2(inputs);
-    journal.update((j) => ({ ...j, phase: next }));
-  }, [inputs, journal]);
+    update((j) => ({ ...j, phase: next }));
+  }, [inputs, update]);
   return { view, confirm, history: d?.phase.history ?? [] };
 }
