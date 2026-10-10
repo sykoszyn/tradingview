@@ -97,9 +97,13 @@ export function sizePosition(inp: SizingInput): SizingResult {
     // Cantidad al stepSize: hacia abajo salvo que eso rompa un mínimo.
     const maxNotional = phase.maxMarginUSDT * lev;
     let qty = roundToStep(notional / entry, step, 'floor');
-    const breaksMin = (q: number) => q * entry < mins.minNotional - EPS || q < mins.minQty - EPS || (q * entry) / lev < minM - EPS;
-    if (breaksMin(qty)) qty = roundToStep(notional / entry, step, 'ceil');
-    if (breaksMin(qty)) qty = Math.max(qty, mins.minQty);
+    // Mínimos del exchange: obligatorios. Margen mínimo de 10 USDT: se tolera quedar
+    // hasta un stepSize por debajo por el redondeo (si no, con margen mínimo = máximo
+    // de la fase nunca habría una cantidad válida).
+    const breaksExchange = (q: number) => q * entry < mins.minNotional - EPS || q < mins.minQty - EPS;
+    const breaksMargin = (q: number) => ((q + step) * entry) / lev < minM - EPS;
+    if (breaksExchange(qty) || breaksMargin(qty)) qty = roundToStep(notional / entry, step, 'ceil');
+    if (breaksExchange(qty)) qty = Math.max(qty, mins.minQty);
     if (qty * entry > maxNotional + EPS) return { ok: false, why: 'min-notional' };
     const check = checkOrderMinimums(filters, qty, entry);
     if (!check.ok) return { ok: false, why: 'min-notional' };

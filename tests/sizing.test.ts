@@ -105,3 +105,13 @@ describe('sizePosition', () => {
     expect(none.status).toBe('liquidacion');
   });
 });
+
+describe('redondeo con margen mínimo = margen máximo (Fase 2)', () => {
+  it('spot ETH con 10 USDT: queda justo por debajo de 10 por el step en vez de fallar', () => {
+    const spot = { ...ETH, market: 'spot' as const, minNotional: 5, stepSize: 0.0001, marketStepSize: 0.0001, minQty: 0.0001, marketMinQty: 0.0001 };
+    const r = sizePosition(base({ market: 'spot', filters: spot, entry: 2490, stop: 2482.5, phase: { maxMarginUSDT: 10, maxLeverage: 2 } }));
+    expect(r.status).toBe('ok');
+    expect(r.margin).toBeLessThanOrEqual(10);
+    expect(r.margin).toBeGreaterThan(10 - 0.0001 * 2490);
+  });
+});

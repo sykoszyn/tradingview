@@ -7,6 +7,8 @@ import { useMarketMeta } from '@/hooks/useMarketMeta';
 import { useLivePrice } from '@/hooks/useLivePrice';
 import { Disclaimer } from './Disclaimer';
 import { MinimumsTable } from './MinimumsTable';
+import { BacktestPanel } from './BacktestPanel';
+import { useBacktest } from '@/hooks/useBacktest';
 
 const TABS = ['Señales', 'Backtest', 'Diario', 'Fases', 'Configuración'] as const;
 type Tab = (typeof TABS)[number];
@@ -19,6 +21,7 @@ export function AppShell() {
   const { config } = useConfig();
   const meta = useMarketMeta();
   const live = useLivePrice(symbol, market);
+  const bt = useBacktest();
   const phaseLimits = config.phases.phase2;
 
   return (
@@ -83,7 +86,8 @@ export function AppShell() {
             </div>
           </>
         )}
-        {tab !== 'Configuración' && <div className="card text-sm text-slate-400">Sección «{tab}» en construcción.</div>}
+        {tab === 'Backtest' && <BacktestPanel cfg={config} meta={meta} bt={bt} />}
+        {tab !== 'Configuración' && tab !== 'Backtest' && <div className="card text-sm text-slate-400">Sección «{tab}» en construcción.</div>}
       </main>
       <Disclaimer />
     </div>
