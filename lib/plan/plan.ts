@@ -9,6 +9,8 @@ import type { Zone } from '../analysis/zones';
 import type { Confidence, SetupSignal, SetupType } from '../analysis/setups';
 import { fee, feeRates, grossPnl, netRiskReward, type FeeRates } from './fees';
 import { sizePosition, type SizingResult } from './sizing';
+import type { LiquidationInfo } from './liquidation';
+import type { FundingEstimate } from './funding';
 
 const HOUR = 3_600_000;
 
@@ -61,6 +63,10 @@ export interface TradePlan {
   minimums: { qtyOk: boolean; notionalOk: boolean; onStep: boolean; ok: boolean };
   feeRates: FeeRates;
   warnings: string[];
+  /** Solo futuros (lo agrega liquidationExtension). */
+  liquidation?: LiquidationInfo;
+  /** Solo futuros (lo agrega fundingExtension). */
+  funding?: FundingEstimate;
 }
 
 export type PlanResult =

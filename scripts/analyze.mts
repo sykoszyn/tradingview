@@ -39,6 +39,14 @@ const info = await resolveResource({ resource: 'exchange-info', provider: 'binan
 const filters = (info.data as Record<string, SymbolFilters>)[symbol];
 const phaseName = process.argv[4] ?? 'phase3';
 const phase = DEFAULT_CONFIG.phases[phaseName as 'phase2' | 'phase3' | 'phase4'];
+import { fundingExtension, liquidationExtension } from '../lib/plan/extensions';
+import type { BracketSet, PremiumIndex } from '../lib/types';
+const extensions = [];
+if (market === 'futures') {
+  const br = await resolveResource({ resource: 'brackets', provider: 'binance', market, symbol }, fetchJson, 'server');
+  const prem = await resolveResource({ resource: 'premium', provider: 'binance', market, symbol }, fetchJson, 'server');
+  extensions.push(liquidationExtension((br.data as Record<string, BracketSet>)[symbol]), fundingExtension((prem.data as PremiumIndex).lastFundingRate, 8));
+}
 const tally: Record<string, number> = {};
 let lastPlan: string | null = null;
 console.log('\nSeñales en las últimas 200 velas de 1h:');
@@ -48,7 +56,7 @@ for (let i = Math.max(2, closed1h.length - 200); i < closed1h.length; i++) {
   const cx = contextAt(s, t, closed1h[i].close, DEFAULT_CONFIG);
   for (const sig of detectSetups({ candles: closed1h, i, zones: cx.zones, trend: cx.trend, market, cfg: DEFAULT_CONFIG })) {
     count++;
-    const r = buildPlan({ signal: sig, symbol, market, zones: cx.zones, filters, cfg: DEFAULT_CONFIG, phase });
+    const r = buildPlan({ signal: sig, symbol, market, zones: cx.zones, filters, cfg: DEFAULT_CONFIG, phase, extensions });
     const res = r.kind === 'discarded' ? `descartada: ${r.code}` : r.plan.status === 'operable' ? `OPERABLE ${r.plan.sizing.leverage}x margen ${f(r.plan.sizing.margin)} riesgo ${f(r.plan.sizing.realRiskUSDT)} R:R ${r.plan.rrTp1.toFixed(2)}` : 'no operable en tu fase';
     tally[r.kind === 'discarded' ? r.code : r.plan.status] = (tally[r.kind === 'discarded' ? r.code : r.plan.status] ?? 0) + 1;
     if (r.kind === 'plan' && r.plan.status === 'operable') lastPlan = planToText(r.plan, filters);

@@ -62,8 +62,10 @@ export function planToText(p: TradePlan, f?: SymbolFilters): string {
 /** Líneas agregadas por extensiones (liquidación, funding). */
 export function planExtraLines(p: TradePlan): string[] {
   const out: string[] = [];
-  const ext = p as TradePlan & { liquidation?: { price: number; distancePct: number }; funding?: { lines: string[] } };
-  if (ext.liquidation) out.push(`Liquidación aprox.: ${n(ext.liquidation.price)} (a ${n(ext.liquidation.distancePct)}% de la entrada)`);
-  if (ext.funding) out.push(...ext.funding.lines);
+  if (p.liquidation)
+    out.push(
+      `Liquidación aprox.: ${n(p.liquidation.price)} (a ${n(p.liquidation.distancePct)}% de la entrada; el stop está al ${n(p.liquidation.stopToLiqRatio * 100, 0)}% de esa distancia)`,
+    );
+  if (p.funding) out.push(...p.funding.lines);
   return out;
 }
